@@ -1,0 +1,6 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Reserva espacio para el header fijo para que el contenido no quede oculto */
+body {
+	padding-top: px; /* ajustar si cambias la altura del header */
+}

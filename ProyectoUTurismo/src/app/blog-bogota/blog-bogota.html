@@ -1,0 +1,43 @@
+<div class="container mt-4">
+    <button class="btn" routerLink="/home">
+      <img src="assets/images/BackArrow.png" alt="ImgBackArrow">
+      Volver al Inicio
+    </button>
+  </div>
+  <div class="title mt-2">
+    <h1><b>Blog de Bogotá</b></h1>
+    <p>Historias profundas sobre la historia de Colombia, su gastronomía, cultura y experiencias auténticas.</p>
+  </div>
+  <h2 class="text-center p-5 text-danger consumoapi">COSUMO DE API</h2>
+
+<div class="subirArticuloBoton">
+  <h2 class="text-center">¿Te gustaría compartir tus conocimientos con otros?</h2>
+  <button class="btn" (click)="openForm()">Añadir Articulo</button>
+</div>
+<div class="modal" [class.active]="formVisible" #modal>
+  <div class="modal-content">
+    <div class="d-flex justify-content-between">
+    <h2>Subir Articulo <hr></h2>
+    <button class="close-btn" (click)="closeForm()">Cerrar</button>
+    </div>
+    <form>
+      <label>¿Cómo quieres que los demás conozcan tu artículo?</label>
+      <input type="text" placeholder="Titulo Articulo"/>
+
+      <label>Nombre</label>
+      <input type="email" placeholder="Tu Nombre" disabled/>
+
+      <label>Fecha de Publicación</label>
+      <input type="date" disabled>
+
+      <label>Sube una imagen sobre tu articulo</label>
+      <input type="file" accept="image/*">
+
+      <label>Sube el contenido de tu articulo</label>
+      <textarea class="textarea-grande"></textarea>
+    </form>
+
+    <button type="submit" class="btn btn-success">Enviar</button>
+  </div>
+</div>
+

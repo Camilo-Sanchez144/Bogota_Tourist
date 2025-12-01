@@ -1,0 +1,175 @@
+.carousel img{
+  height: 600px;
+  filter: brightness(0.6);
+}
+.carousel-caption-global {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  text-align: center;
+  z-index: 10;
+  text-shadow: 2px 2px 5px black;
+}
+
+.carousel-caption-global h3 {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.carousel-caption-global p {
+  font-size: 1.2rem;
+}
+.textup{
+  color:rgb(255, 153, 0);
+}
+.articulos{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  justify-content: space-between;
+  align-items: center;
+}
+.articulos h2{
+  color: rgb(255, 153, 0);
+  font-family: "Noto Sans Kannada", sans-serif;
+  font-size: 12px;
+}
+.articulos h3{
+  font-family: 'Times New Roman', Times, serif;
+  color: black;
+  font-size: 50px;
+}
+.articulosdescripcion{
+  gap:30px;
+  justify-content: center;
+}
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 22rem;
+}
+.card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+.boton{
+  border: 2px solid rgb(0, 90, 31);
+  color: rgb(0, 90, 31);
+}
+.boton:hover{
+  background-color: rgb(0, 90, 31);
+  color: white;
+}
+.fondo-full {
+  width: 100%;
+  background-color: #fff5f5;
+  padding: 40px 0;
+}
+.guias {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  justify-content: space-between;
+  align-items: center;
+}
+.guias h4{
+  color: rgb(255, 153, 0);
+  font-family: "Noto Sans Kannada", sans-serif;
+  font-size: 12px;
+}
+.guias h5{
+  font-family: 'Times New Roman', Times, serif;
+  color: black;
+  font-size: 50px;
+}
+.contenedor-cards {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* CARD moderna */
+.card-modern {
+  background: white;
+  padding: 35px;
+  width: 340px;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.05);
+  transition: 0.3s ease;
+}
+
+/* Hover con borde verde */
+.card-modern:hover {
+  border-color: #004d2b; /* verde oscuro */
+  transform: translateY(-5px);
+}
+
+
+/* Título */
+.card-modern h3 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* Texto */
+.card-modern p {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+/* Tags */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tags span {
+  font-size: 13px;
+  background: #f0eff0;
+  padding: 5px 12px;
+  border-radius: 12px;
+  color: #6d6d6d;
+}
+.fondo-full2 {
+  width: 100%;
+  background-color: #014200;
+  padding: 40px 0;
+}
+.explorar{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+.explorar h5{
+  font-family:'Times New Roman', Times, serif ;
+  text-align: center;
+  font-size: 40px;
+}
+.explorar p{
+  text-align: center;
+}
+.botonexplorar{
+  background-color: #ffa200;
+  color: white;
+  padding: 0.7%;
+}
+.botonexplorar:hover{
+  background-color: #d88901;
+}
+.botonleerarticulos{
+  color: white;
+  border: 2px white solid;
+  padding: 0.7%;
+}
+.botonleerarticulos:hover{
+  background-color: #025f00;
+}
