@@ -1,1 +1,107 @@
-<p>dashboard-user works!</p>
+<div class="container mt-4">
+    <button class="btn" routerLink="/home">
+      <img src="assets/images/BackArrow.png" alt="ImgBackArrow">
+      Volver al Inicio
+    </button>
+</div>
+<div class="title mt-2">
+    <h1><b>Panel de Control de Usuario</b></h1>
+    <p>Gestiona tus planes de viaje y perfil de usuario</p>
+    <div class="perfil-container">
+  <div class="perfil-header">
+    <img src="https://i.imgur.com/1X4pYkP.png" alt="avatar" class="perfil-avatar">
+
+    <div class="perfil-info">
+      <h2>Viajero Colombiano</h2>
+      <p class="email">viajero@bogota.com</p>
+      <p>Amante de la historia, la gastronomía y las aventuras auténticas</p>
+      <span class="miembro">Miembro desde Noviembre 2025</span>
+    </div>
+    <div class="d-flex-block">
+    <button class="btn-editar" (click)="openForm()">Editar Perfil</button>
+    <button class="btn-editar" (click)="openFormPassword()"> Cambiar contraseña</button>
+    </div>
+  </div>
+</div>
+
+<div class="stats-container">
+
+  <div class="stat-card pendiente">
+    <h3>0</h3>
+    <p>Viajes Pendientes</p>
+  </div>
+
+  <div class="stat-card curso">
+    <h3>0</h3>
+    <p>Viajes en Curso</p>
+  </div>
+
+  <div class="stat-card completados">
+    <h3>0</h3>
+    <p>Viajes Completados</p>
+  </div>
+</div>
+
+
+ <div class="d-flex justify-content-between">
+  <h2 class="titulo-planes">Mis Planes de Viaje</h2>
+  <button class="btn btn-crear mt-4">+ Crear Nuevo Plan</button>
+ </div>
+<div class="planes-section mb-4">
+  <p>Aún no tienes planes de viaje creados</p>
+  <button class="btn-primer-plan">+ Crear tu Primer Plan</button>
+</div>
+  <h3>Mis Artículos Publicados</h3>
+  <div class="planes-section mb-4">
+  <p class="text-info">Aún no has publicado ningún articulo (╥﹏╥)</p>
+  <p>Aquí puedes subir tus experiencias sobre los lugares que visitas. Cada artículo que publiques ayudará a otros viajeros a conocer sitios nuevos y vivir mejores momentos.</p>
+  <button class="btn-primer-plan" routerLink="/blog-bogota">+ Anímate a crear tu primer Articulo</button>
+</div>
+</div>
+
+
+<div class="modal" [class.active]="formVisible" #modal>
+  <div class="modal-content">
+    <div class="d-flex justify-content-between">
+    <h2>Modificar Perfil<hr></h2>
+    <button class="close-btn" (click)="closeForm()">Cerrar</button>
+    </div>
+    <form class="mb-3">
+      <label>Actualiza tu foto de perfil</label>
+      <input type="file" accept="image/*">
+
+      <label>Nombre</label>
+      <input type="email" placeholder="Nombre"/>
+
+      <label>Email</label>
+      <input type="email" placeholder="TuEmail@gmail.com"/>
+
+      <label>Descripcion</label>
+      <input type="text">
+
+    </form>
+
+    <button type="submit" class="btn btn-success">Enviar</button>
+  </div>
+</div>
+<div class="modal" [class.active]="formPasswordVisible" #modal>
+  <div class="modal-content">
+    <div class="d-flex justify-content-between">
+    <h2>Actualizar contraseña<hr></h2>
+    <button class="close-btn" (click)="closeForm()">Cerrar</button>
+    </div>
+    <form class="mb-3">
+      <label>Contraseña Actual</label>
+      <input type="password" placeholder="********">
+
+      <label>Nueva contraseña</label>
+      <input type="password" placeholder="********"/>
+
+      <label>Confirma tu contraseña</label>
+      <input type="password" placeholder="********"/>
+
+    </form>
+
+    <button type="submit" class="btn btn-success">Actualizar contraseña</button>
+  </div>
+</div>

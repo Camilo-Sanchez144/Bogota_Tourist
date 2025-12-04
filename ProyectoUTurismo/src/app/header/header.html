@@ -2,20 +2,20 @@
 <section class="header">
 <header class="main-header mt-2">
   <div class="logo">
-    <img src="assets/images/Logo.png" alt="">
-    <h1>Bogota Cultural Conectada</h1>
+    <img src="assets/images/Logo.png" alt="Logo" routerLink="/home">
+    <h1 routerLink="/home">Bogota Cultural Conectada</h1>
   </div>
 
   <ul class="menu">
-    <li><a href="">Home</a></li>
-    <li><a href="">Guias</a></li>
-    <li><a href="">Explorar</a></li>
+    <li><a [routerLink]="['/home']" fragment="home">Home</a></li>
+    <li><a [routerLink]="['/home']" fragment="guias">Guias</a></li>
+    <li><a [routerLink]="['/home']" fragment="explorar">Explorar</a></li>
   </ul>
   <div class="user-menu">
     <button class="user-btn" (click)="abrirmenu()">User</button>
     @if(menuopen){
       <div class="dropdown">
-        <a routerLink="/perfil">Mi perfil</a>
+        <a routerLink="/dashboard-user">Mi perfil</a>
         <a (click)="cerrarsesion()">Cerrar sesión</a>
       </div>
     }

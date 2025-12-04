@@ -1,20 +1,18 @@
 import { Component } from '@angular/core';
-import { Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { Login } from './login/login';
 import { Home } from './home/home';
 import { BlogBogota } from './blog-bogota/blog-bogota';
-import { Articulo1 } from './home/articulo1/articulo1';
-import { Articulo2 } from './home/articulo2/articulo2';
-import { Articulo3 } from './home/articulo3/articulo3';
 import { Explorarmapa } from './explorarmapa/explorarmapa';
+import { DashboardUser } from './dashboard-user/dashboard-user';
+import { PlanearViaje } from './planear-viaje/planear-viaje';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'home', component: Home },
+  { path: 'dashboard-user', component: DashboardUser},
   { path: 'blog-bogota', component: BlogBogota},
-  { path: 'articulo/1', component: Articulo1},
-  { path: 'articulo/2', component: Articulo2},
-  { path: 'articulo/3', component: Articulo3},
   { path: 'explorarmapa', component: Explorarmapa },
+  { path: 'planearViaje', component: PlanearViaje },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];

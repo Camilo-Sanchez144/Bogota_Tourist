@@ -1,0 +1,112 @@
+<div class="container mt-4">
+  <button class="btn" routerLink="/home">
+    <img src="assets/images/BackArrow.png" alt="ImgBackArrow">
+    Volver al Inicio
+  </button>
+</div>
+
+<div class="title mt-2">
+  <h1><b>Planea tu propio viaje</b></h1>
+  <p>Explora una selección de planes diseñados para que vivas Bogotá a tu manera.</p>
+</div>
+
+<!-- MODAL -->
+<div class="modal" [class.active]="formVisible">
+  <div class="modal-content">
+
+    <div class="d-flex justify-content-between">
+      <h2>Planear mi Viaje<hr></h2>
+      <button class="close-btn" (click)="closeForm()">Cerrar</button>
+    </div>
+
+    <form class="mb-3" (ngSubmit)="enviarFormulario()">
+
+      <label>Cuando relizarás el viaje</label>
+      <input type="date" [(ngModel)]="form.date" name="date" required>
+
+      <label>Cuántas personas viajarán</label>
+      <select [(ngModel)]="form.selectedOption" name="selectedOption">
+        @for (item of items; track item) {
+          <option [value]="item">{{ item }}</option>
+        }
+      </select>
+
+      <label>Presupuesto diario (USD)</label>
+      <input type="text" [(ngModel)]="form.presupuesto" name="presupuesto" placeholder="Ej: 100">
+      
+      <label for="">¿Qué te interesa?</label>
+      <div class="categories-container">
+        @for (c of categories; track c) {
+          <button
+            type="button"
+            (click)="toggleCategory(c)"
+            [class.selected]="selectedCategories.includes(c)"
+            class="category-btn"
+          >
+            {{ c }}
+          </button>
+        }
+      </div>
+      <hr>
+      <label for="">Lugares para visitar</label>
+      <div class="selected-list">
+        @if (selectedlugares.length === 0) {
+          <span class="none">Ninguna</span>
+        }
+        @for (sc of selectedlugares; track sc) {
+          <span class="pill">{{ sc }}</span>
+        }
+      </div>
+      <label for="">Añadir lugares para visitar</label>
+      @for (l of lugares; track l) {
+          <button
+            type="button"
+            (click)="togglelugares(l)"
+            [class.selected]="selectedlugares.includes(l)"
+            class="category-btn-lugar"
+          >
+            {{ l }}
+          </button>
+        }
+      <label>Plan seleccionado</label>
+      <input type="text" [(ngModel)]="form.planTitulo" name="planTitulo" readonly>
+
+      <label>Precio</label>
+      <input type="text" [(ngModel)]="form.planPrecio" name="planPrecio" readonly>
+
+      <button type="submit" class="btn btn-enviar w-100 mt-3">
+        Enviar
+      </button>
+    </form>
+
+  </div>
+</div>
+
+<!-- CARDS -->
+<div class="contenedor-cards mt-5 mb-5">
+  @for(p of planes; track p) {
+    <div class="card-modern">
+      <h3><strong>{{ p.titulo }}</strong></h3>
+      <p>{{ p.descripcion }}</p>
+
+      <h4><strong>Duración:</strong></h4>
+      <p>{{ p.duracion }}</p>
+      <hr>
+
+      <h4><strong>Destacados:</strong></h4>
+      <div class="tags">
+        @for (d of p.destacados; track d) {
+          <span>{{ d }}</span>
+        }
+      </div>
+      <hr>
+
+      <h4><strong>Precio:</strong></h4>
+      <p>${{ p.precio }}</p>
+
+      <button class="btn btn-enviar w-100" (click)="openForm(p)">
+        Planear con este viaje
+      </button>
+    </div>
+  }
+</div>
