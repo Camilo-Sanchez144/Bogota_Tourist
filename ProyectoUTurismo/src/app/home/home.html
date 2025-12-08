@@ -6,7 +6,6 @@
       <p>Historias, sabores y experiencias que trascienden lo turístico. Información exclusiva para descubridores
         auténticos.</p>
     </div>
-
     <div class="carousel-indicators">
       <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></button>
       <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></button>
@@ -89,14 +88,13 @@
       </button>
       }
     </div>
-
     <div class="lista-cards mt-5">
       @for (item of itemsFiltrados(); track item) {
       <div class="card mb-3">
 
         <div class="card-header" (click)="item.open = !item.open">
           <div class="icono">
-            <img [src]="item.icono" alt="">
+            <img [src]="item.icon" alt="icono">
           </div>
           <div class="info">
             <h3>{{ item.titulo }}</h3>

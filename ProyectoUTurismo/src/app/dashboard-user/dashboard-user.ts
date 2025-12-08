@@ -8,6 +8,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './dashboard-user.css',
 })
 export class DashboardUser {
+  user = JSON.parse(localStorage.getItem("user") || '{}');
   formPasswordVisible = false;
   openFormPassword() {
   this.formPasswordVisible = true;

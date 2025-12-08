@@ -216,6 +216,12 @@ html {
 
 .card-header .icono img {
   width: 50px;
+  margin-left: -10px;
+}
+.icono img{
+  height: 40px;
+  max-width: 40px;
+  margin-right: 10px;
 }
 
 .card-header .info {

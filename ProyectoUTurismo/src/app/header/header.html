@@ -12,7 +12,7 @@
     <li><a [routerLink]="['/home']" fragment="explorar">Explorar</a></li>
   </ul>
   <div class="user-menu">
-    <button class="user-btn" (click)="abrirmenu()">User</button>
+    <button class="user-btn" (click)="abrirmenu()">{{user.username}}</button>
     @if(menuopen){
       <div class="dropdown">
         <a routerLink="/dashboard-user">Mi perfil</a>

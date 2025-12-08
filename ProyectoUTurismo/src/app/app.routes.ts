@@ -6,13 +6,15 @@ import { BlogBogota } from './blog-bogota/blog-bogota';
 import { Explorarmapa } from './explorarmapa/explorarmapa';
 import { DashboardUser } from './dashboard-user/dashboard-user';
 import { PlanearViaje } from './planear-viaje/planear-viaje';
+import { checkloginGuard } from './guards/checklogin-guard';
+import { loginGuard } from './guards/login.guard';
 
 export const routes: Routes = [
-  { path: 'login', component: Login },
-  { path: 'home', component: Home },
-  { path: 'dashboard-user', component: DashboardUser},
-  { path: 'blog-bogota', component: BlogBogota},
-  { path: 'explorarmapa', component: Explorarmapa },
-  { path: 'planearViaje', component: PlanearViaje },
+  { path: 'login', component: Login, canActivate: [loginGuard] },
+  { path: 'home', component: Home, canActivate: [checkloginGuard] },
+  { path: 'dashboard-user', component: DashboardUser, canActivate: [checkloginGuard] },
+  { path: 'blog-bogota', component: BlogBogota, canActivate: [checkloginGuard] },
+  { path: 'explorarmapa', component: Explorarmapa, canActivate: [checkloginGuard] },
+  { path: 'planearViaje', component: PlanearViaje, canActivate: [checkloginGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
