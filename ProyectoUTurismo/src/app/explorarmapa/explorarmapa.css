@@ -1,0 +1,359 @@
+/* Mismos estilos base anteriores + añadidos */
+
+.map-layout {
+  display: flex;
+  height: calc(100vh - 70px); 
+  overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
+  background-color: #fff;
+}
+
+.sidebar {
+  width: 400px;
+  background-color: #F8F9FA;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.sidebar-header {
+  padding: 20px;
+  background-color: white;
+  border-bottom: 1px solid #eee;
+}
+
+.titulo-seccion {
+  color: #0052A6;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.search-box {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 15px 12px 40px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  background-color: #fff;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.search-box input:focus {
+  border-color: #0052A6;
+  box-shadow: 0 0 0 3px rgba(0, 82, 166, 0.1);
+}
+
+.search-box i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+}
+
+.filtros {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+  scrollbar-width: none; /* Ocultar scrollbar firefox */
+}
+
+.btn-filtro {
+  border: none;
+  background: #f1f3f4;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: #5f6368;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-filtro:hover {
+  background-color: #e8eaed;
+}
+
+.btn-filtro.active {
+  background-color: #E6F4EA; /* Fondo suave verde */
+  color: #137333; /* Texto verde oscuro Google Maps style */
+  border: 1px solid #137333;
+}
+
+.lista-sitios {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  background-color: #F8F9FA;
+}
+
+.card-sitio {
+  display: flex;
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+  height: 100px;
+}
+
+.card-sitio:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.img-container {
+  width: 100px;
+  min-width: 100px;
+  background-size: cover;
+  background-position: center;
+  background-color: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-container {
+  padding: 10px 15px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info-container h4 {
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #202124;
+}
+
+.info-container p {
+  font-size: 0.75rem;
+  color: #70757a;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.badge {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: #eee;
+  color: #555;
+  font-weight: 600;
+}
+
+.badge.historia { background-color: #E8F0FE; color: #1967D2; }
+.badge.naturaleza { background-color: #CEEAD6; color: #188038; }
+.badge.cultura { background-color: #FEF7E0; color: #EA8600; }
+
+.arrow-action {
+  display: flex;
+  align-items: center;
+  padding-right: 15px;
+  color: #dadce0;
+}
+
+/* MAPA */
+.map-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.google-map {
+  width: 100%;
+  height: 100%;
+}
+
+.btn-limpiar-ruta {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  font-weight: bold;
+  cursor: pointer;
+  color: #d93025;
+}
+
+.btn-limpiar-ruta:hover {
+  background-color: #f1f3f4;
+}
+
+@media (max-width: 768px) {
+  .map-layout { flex-direction: column-reverse; }
+  .sidebar { width: 100%; height: 45%; }
+  .map-wrapper { height: 55%; }
+}
+
+
+/* ... (Tus estilos anteriores de sidebar, mapa, etc. MANTENLOS IGUAL) ... */
+/* Solo agrega esto al final */
+
+/* === ESTILOS MODAL === */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 2000;
+  backdrop-filter: blur(2px);
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  border-radius: 16px;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: 20px 25px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #0052A6; /* Azul Andino */
+  font-family: 'Times New Roman', serif;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s;
+}
+.close-btn:hover { color: #d93025; }
+
+.modal-body {
+  padding: 25px;
+}
+
+/* Galería Horizontal */
+.photos-gallery {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scrollbar-width: thin;
+}
+
+.photos-gallery img {
+  height: 180px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.desc-text {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* Grid de Información */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+/* Reseñas */
+.reviews-section h5 {
+  color: #007A53; /* Verde Monserrate */
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.review-card {
+  background: white;
+  border: 1px solid #eee;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.avatar-mini {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+/* Botones */
+.action-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-primary-action, .btn-secondary-action {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+
+.btn-primary-action {
+  background-color: #007A53; /* Verde Monserrate */
+  color: white;
+}
+
+.btn-secondary-action {
+  background-color: #0052A6; /* Azul Andino */
+  color: white;
+}
+
+.btn-primary-action:hover, .btn-secondary-action:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}

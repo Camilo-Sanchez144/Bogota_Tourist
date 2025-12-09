@@ -30,7 +30,7 @@ export class Acceso {
     const token = localStorage.getItem('access');
     const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
 
-    return this.http.get<Usuario>(`${this.registroUrl}${id}`, { headers });
+    return this.http.get<Usuario>(`${this.registroUrl}${id}/`, { headers });
   }
 
 }
