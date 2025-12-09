@@ -1,4 +1,9 @@
 <div class="container mt-4">
+    @if (showSuccess) {
+      <div class="alert alert-success" role="alert">
+        {{ successMessage }}
+      </div>
+    }
     <button class="btn" routerLink="/home">
       <img src="assets/images/BackArrow.png" alt="ImgBackArrow">
       Volver al Inicio
@@ -70,6 +75,9 @@
     <form class="mb-3" [formGroup]="profileForm" (ngSubmit)="onSubmitProfile()">
       <label>Actualiza tu foto de perfil</label>
       <input type="file" accept="image/*" (change)="onFileSelected($event)">
+      @if (previewUrlTemp) {
+        <img [src]="previewUrlTemp" alt="preview" style="max-width: 200px; margin-top: 10px;">
+      }>
 
       <label>Nombre</label>
       <input type="text" placeholder="Nombre" [value]="nombre" disabled />

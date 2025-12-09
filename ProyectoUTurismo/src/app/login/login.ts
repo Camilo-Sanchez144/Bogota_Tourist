@@ -63,7 +63,6 @@ iniciarSesion() {
             complete: () => this.router.navigate(['home'])
           });
         } else {
-          console.warn('No se encontró user_id en el token, navegando sin guardar user');
           this.router.navigate(['home']);
         }
       },
@@ -83,7 +82,6 @@ iniciarSesion() {
       ).join(''));
       return JSON.parse(jsonPayload);
     } catch (e) {
-      console.error('No se pudo decodificar el token:', e);
       return null;
     }
   }
@@ -168,7 +166,6 @@ registrarse(){
     password: this.formRegistro.value.password,
     cellphone: this.formRegistro.value.cellphone,
   }
-  console.log('Payload registro:', objeto);
 
   this.accesoService.registrarse(objeto).subscribe({
     next:() => {
@@ -178,7 +175,6 @@ registrarse(){
       this.cdr.detectChanges();
     },
     error: (err) => {
-      console.error('Error registrarse:', err);
       let detalle = 'Error al registrarse. Intente de nuevo.';
       /*if (err && err.error) {
         if (typeof err.error === 'string') {

@@ -1,13 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { Acceso } from '../services/acceso';
 import { appsettings } from '../settings/appsettings';
 import { emailValidator, phoneValidator } from '../validators/custom-validators';
 
 @Component({
   selector: 'app-dashboard-user',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, CommonModule],
   templateUrl: './dashboard-user.html',
   styleUrl: './dashboard-user.css',
 })
@@ -21,6 +22,7 @@ export class DashboardUser {
   bio: string = this.user.bio || '';
   profile_picture: File | null = null;
   previewUrl: string = this.resolvePhoto(this.user.profile_picture) || 'https://i.imgur.com/1X4pYkP.png';
+  previewUrlTemp: string | null = null;
   profileForm: FormGroup = this.fb.group({
     email: [this.email || '', [Validators.required, emailValidator()]],
     cellphone: [this.cellphone || '', [Validators.required, phoneValidator()]],
@@ -37,6 +39,8 @@ export class DashboardUser {
 
   passwordError = ''
   formPasswordVisible = false;
+  successMessage = '';
+  showSuccess = false;
 
   private passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
     const newPassword = group.get('newPassword')?.value;
@@ -51,13 +55,14 @@ export class DashboardUser {
   formVisible = false;
 
   openForm() {
-    console.log('BlogBogota.openForm called');
     this.formVisible = true;
   }
 
   closeForm() {
     this.formVisible = false;
     this.formPasswordVisible = false;
+    this.previewUrlTemp = null;
+    this.profile_picture = null;
   }
   changePassword(){
     this.passwordError = '';
@@ -68,7 +73,6 @@ export class DashboardUser {
     const newPassword = this.passwordForm.get('newPassword')?.value;
     const userId = this.user?.id;
       if (!userId) {
-      console.error('No hay id de usuario para actualizar');
       return;
     }
     const formData = new FormData();
@@ -79,7 +83,7 @@ export class DashboardUser {
         this.passwordForm.reset();
         this.formPasswordVisible = false;
         this.passwordError = '';
-        console.log('Contraseña actualizada');
+        this.showSuccessMessage('Contraseña actualizada correctamente');
       },
       error: (err) => {
         console.error('Error al actualizar contraseña:', err);
@@ -91,7 +95,7 @@ export class DashboardUser {
     const input = event.target as HTMLInputElement;
     this.profile_picture = input.files && input.files[0] ? input.files[0] : null;
     if (this.profile_picture) {
-      this.previewUrl = URL.createObjectURL(this.profile_picture);
+      this.previewUrlTemp = URL.createObjectURL(this.profile_picture);
     }
   }
 
@@ -127,14 +131,16 @@ export class DashboardUser {
         this.cellphone = userActualizado.cellphone;
         this.bio = userActualizado.bio || '';
         this.previewUrl = this.resolvePhoto(userActualizado.profile_picture) || this.previewUrl;
+        this.previewUrlTemp = null;
+        this.profile_picture = null;
         this.profileForm.patchValue({
           email: userActualizado.email,
           cellphone: userActualizado.cellphone,
           bio: userActualizado.bio || '',
         });
         localStorage.setItem('user', JSON.stringify(userActualizado));
-
-        console.log('Perfil actualizado');
+        this.showSuccessMessage('Perfil actualizado correctamente');
+        this.formVisible = false;
       },
       error: (err) => {
         console.error('Error al actualizar perfil:', err);
@@ -155,6 +161,13 @@ export class DashboardUser {
 
   passwordsMismatch(): boolean {
     return this.passwordForm.hasError('passwordsMismatch') && this.passwordForm.get('confirmNewPassword')?.touched === true;
+  }
+
+  private async showSuccessMessage(msg: string) {
+    this.successMessage = msg;
+    this.showSuccess = true;
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    this.showSuccess = false;
   }
 
   private resolvePhoto(url?: string | null): string | null {
