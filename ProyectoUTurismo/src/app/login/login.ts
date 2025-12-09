@@ -50,15 +50,12 @@ iniciarSesion() {
         localStorage.setItem('access', data.access);
         localStorage.setItem('refresh', data.refresh);
         const payload = this.parseJwt(data.access);
-        console.log('📦 Payload completo del token:', payload);
         const userId = payload?.user_id ?? payload?.id;
-        console.log('🆔 user id extraído:', userId, payload);
 
         if (userId) {
           this.accesoService.getUserById(userId).subscribe({
             next: (user) => {
               localStorage.setItem('user', JSON.stringify(user));
-              console.log('👤 Usuario guardado en storage:', user);
             },
             error: (errUser) => {
               console.warn('No se pudo obtener el usuario por id, navegando igual:', errUser);
@@ -137,9 +134,6 @@ iniciarSesion() {
     this.mode = 'signup';
   }
 
-  login() {
-    this.router.navigate(['/home']);
-  }
   public formRegistro: FormGroup = this.formBuild.group({
     id:[''],
     username: ['', [Validators.required, usernameValidator()]],
