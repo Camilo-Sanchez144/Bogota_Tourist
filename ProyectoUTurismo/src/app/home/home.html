@@ -39,37 +39,23 @@
   <h2>ARTÍCULOS DESTACADOS</h2>
   <h3><b>Historias que importan</b></h3>
   <p>Sumérjete en historias profundas sobre la historia de Colombia, sus lugares y su gastronomía única.</p>
+  <div class="d-flex justify-content-end mb-2" style="padding-right: 5%;">
+    <button class="btn btn-sm btn-outline-primary" (click)="loadPosts()">↻ Recargar Artículos</button>
+  </div>
   <div class="articulosdescripcion d-flex">
-    <div class="card">
-      <img class="card-img-top" src="assets/images/imagecard1.jpg" alt="Card image cap">
-      <div class="card-body">
-        <h5 class="card-title">TITULO ARTICULO</h5>
-        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia harum quod rem quas
-          dolorem nihil optio nostrum in culpa quam, totam obcaecati illo excepturi sunt nobis et. Dolore, aperiam quod.
-        </p>
-        <a href="#" class="btn btn-primary">Conocer más...</a>
+    @for (post of posts; track post.id) {
+      <div class="card">
+        <img class="card-img-top" [src]="post.image ? 'http://127.0.0.1:8000' + post.image : 'assets/images/imagecard1.jpg'" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">{{ post.title }}</h5>
+          <p class="card-text">{{ post.description | slice:0:150 }}...</p>
+          <a [routerLink]="['/blog-bogota']" class="btn btn-primary">Conocer más...</a>
+        </div>
       </div>
-    </div>
-    <div class="card">
-      <img class="card-img-top" src="assets/images/imagecard1.jpg" alt="Card image cap">
-      <div class="card-body">
-        <h5 class="card-title">TITULO ARTICULO</h5>
-        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia harum quod rem quas
-          dolorem nihil optio nostrum in culpa quam, totam obcaecati illo excepturi sunt nobis et. Dolore, aperiam quod.
-        </p>
-        <a href="#" class="btn btn-primary">Conocer más...</a>
-      </div>
-    </div>
-    <div class="card">
-      <img class="card-img-top" src="assets/images/imagecard1.jpg" alt="Card image cap">
-      <div class="card-body">
-        <h5 class="card-title">TITULO ARTICULO</h5>
-        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia harum quod rem quas
-          dolorem nihil optio nostrum in culpa quam, totam obcaecati illo excepturi sunt nobis et. Dolore, aperiam quod.
-        </p>
-        <a href="#" class="btn btn-primary">Conocer más...</a>
-      </div>
-    </div>
+    }
+    @if (posts.length === 0) {
+      <p>No hay artículos destacados por el momento.</p>
+    }
   </div>
   <div class="d-flex justify-content-center">
     <button class="btn boton mt-4" routerLink="/blog-bogota">Ver Todos los Articulos</button>
@@ -127,7 +113,7 @@
         con información exclusiva.</p>
       <div class="d-flex justify-content-center align-items-center gap-3 mt-4">
         <button class="btn botonexplorar" routerLink="/explorarmapa">Explorar Lugares</button>
-        <button class="btn botonleerarticulos">Leer Articulos</button>
+        <button class="btn botonleerarticulos" routerLink="/blog-bogota">Leer Articulos</button>
       </div>
     </div>
   </div>

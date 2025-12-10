@@ -200,3 +200,61 @@
   border: none;
   height: 30px;
 }
+
+/* Copied from planear-viaje.css */
+.categories-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.category-btn {
+  width: 100%;
+  padding: 12px 0;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.2s;
+}
+
+.category-btn:hover {
+  background: #f5f5f5;
+}
+
+.category-btn.selected {
+  background: #0052a6; 
+  color: white;
+  border-color: #0052a6;
+}
+
+.category-btn-lugar {
+  width: 50%;
+  padding: 12px 0;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.2s;
+  text-align: left;
+  margin-bottom: 5px;
+  margin-right: 5px;
+}
+
+.category-btn-lugar:hover {
+  background: #f5f5f5;
+}
+
+.category-btn-lugar.selected {
+  background: #0052a6; 
+  color: white;
+  border-color: #0052a6;
+}
+
+.selected-list { margin: 8px 0 12px 0; display: flex; gap: 8px; flex-wrap: wrap; }
+.selected-list .pill { background: #fff5ee; color: #6d6d6d; padding: 6px 10px; border-radius: 999px; border: 1px solid #f0eaea; font-size: 13px; }
+.selected-list .none { color: #7a7a7a; font-style: italic; }
+

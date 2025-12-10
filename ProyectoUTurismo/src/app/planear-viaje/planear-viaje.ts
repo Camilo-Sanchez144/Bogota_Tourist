@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TripsService } from '../services/trips.service';
+import { LocationsService } from '../services/locations.service';
+import { Trip } from '../interfaces/Trip';
+import { Place } from '../interfaces/Place';
 
 @Component({
   selector: 'app-planear-viaje',
@@ -9,7 +13,9 @@ import { RouterLink } from '@angular/router';
   templateUrl: './planear-viaje.html',
   styleUrl: './planear-viaje.css',
 })
-export class PlanearViaje {
+export class PlanearViaje implements OnInit {
+  private tripsService = inject(TripsService);
+  private locationsService = inject(LocationsService);
 formVisible = false;
 
 selectedPlan: any = null;
@@ -40,21 +46,38 @@ closeForm() {
 }
 
 enviarFormulario() {
-  // Construir payload incluyendo categorías seleccionadas y plan completo
-  const body = {
-    ...this.form,
-    selectedCategories: this.selectedCategories,
-    planCompleto: this.selectedPlan
-  };
+    const trip: Trip = {
+      title: this.form.planTitulo || 'Mi Viaje a Bogotá',
+      travel_date: this.form.date,
+      number_of_people: parseInt(this.form.selectedOption) || 1,
+      daily_budget: this.form.presupuesto ? parseFloat(this.form.presupuesto) : 0,
+      plan_name: this.form.planTitulo,
+      plan_price: this.form.planPrecio ? parseFloat(this.form.planPrecio) : 0,
+      description: `Categorías: ${this.selectedCategories.join(', ')}. Lugares: ${this.selectedlugares.join(', ')}`
+    };
 
-  // Aquí puedes enviar `body` a tu API con fetch o HttpClient.
-  // Ejemplo simple (fetch):
-  // fetch('/api/planes', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) })
-  //   .then(r => r.json()).then(res => console.log('respuesta', res));
+    if (!localStorage.getItem('access')) {
+      alert('Debes iniciar sesión para crear un viaje.');
+      return;
+    }
 
-  console.log('Datos enviados:', body);
-  this.limpiarFormulario();
-}
+    this.tripsService.createTrip(trip).subscribe({
+      next: (res) => {
+        console.log('Viaje creado:', res);
+        alert('¡Viaje creado exitosamente!');
+        this.limpiarFormulario();
+        this.closeForm();
+      },
+      error: (err) => {
+        console.error('Error creando viaje:', err);
+        if (err.status === 401) {
+          alert('Tu sesión ha expirado o no es válida. Por favor, inicia sesión nuevamente.');
+        } else {
+          alert('Error al crear el viaje. Intenta nuevamente.');
+        }
+      }
+    });
+  }
 limpiarFormulario() {
   this.form.date = '';
   this.form.selectedOption = '';
@@ -68,18 +91,24 @@ categories = [
   "Arte",
   "Aventura"
 ];
-lugares=[
-  "+ Monserrate",
-  "+ La Candelaria",
-  "+ Museo del Oro",
-  "+ Usaquén",
-  "+ Jardín Botánico",
-  "+ Planetario de Bogotá"
-]
-selectedlugares: string[] = [];
-selectedCategories: string[] = [];
+  lugares: string[] = [];
+  selectedlugares: string[] = [];
+  selectedCategories: string[] = [];
 
-togglelugares(lugares: string) {
+  ngOnInit(): void {
+    this.loadPlaces();
+  }
+
+  loadPlaces() {
+    this.locationsService.getPlaces().subscribe({
+      next: (places: Place[]) => {
+        this.lugares = places.map(p => p.name);
+      },
+      error: (err) => console.error('Error loading places', err)
+    });
+  }
+
+  togglelugares(lugares: string) {
   const index = this.selectedlugares.indexOf(lugares);
 
   if (index === -1) {

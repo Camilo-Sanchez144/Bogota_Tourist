@@ -1,6 +1,8 @@
 /// <reference types="google.maps" />
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ElementRef, AfterViewInit, NgZone } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, NgZone, inject, OnInit } from '@angular/core';
+import { LocationsService } from '../services/locations.service';
+import { Place } from '../interfaces/Place';
 
 @Component({
   selector: 'app-explorarmapa',
@@ -9,7 +11,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, NgZone } from '@angula
   templateUrl: './explorarmapa.html',
   styleUrl: './explorarmapa.css'
 })
-export class Explorarmapa implements AfterViewInit {
+export class Explorarmapa implements AfterViewInit, OnInit {
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
 
   map!: google.maps.Map;
@@ -24,21 +26,31 @@ export class Explorarmapa implements AfterViewInit {
   modalVisible: boolean = false;
   selectedPlaceDetails: any = null;
   isLoadingDetails: boolean = false;
+  localReviews: any[] = [];
 
-  sitios: any[] = [
-    { nombre: 'Monserrate', lat: 4.6058, lng: -74.0555, categoria: 'Naturaleza', descripcion: 'El cerro tutelar de la ciudad.', imagen: '' },
-    { nombre: 'Museo del Oro', lat: 4.6018, lng: -74.0719, categoria: 'Cultura', descripcion: 'Colección de orfebrería única.', imagen: '' },
-    { nombre: 'Jardín Botánico de Bogotá', lat: 4.6661, lng: -74.1003, categoria: 'Naturaleza', descripcion: 'Centro de investigación y educación.', imagen: '' },
-    { nombre: 'La Candelaria', lat: 4.5969, lng: -74.0729, categoria: 'Historia', descripcion: 'Centro histórico y colonial.', imagen: '' },
-    { nombre: 'Usaquén', lat: 4.6965, lng: -74.0306, categoria: 'Cultura', descripcion: 'Pueblo colonial y mercado de pulgas.', imagen: '' },
-    { nombre: 'Planetario de Bogotá', lat: 4.6122, lng: -74.0700, categoria: 'Cultura', descripcion: 'Escenario de divulgación científica.', imagen: '' }
-  ];
+  private locationsService = inject(LocationsService);
+  sitios: Place[] = [];
 
-  sitiosFiltrados: any[] = [];
+  sitiosFiltrados: Place[] = [];
   marcadores: google.maps.Marker[] = [];
 
-  constructor(private ngZone: NgZone) {
-    this.sitiosFiltrados = [...this.sitios];
+  constructor(private ngZone: NgZone) {}
+
+  ngOnInit(): void {
+    this.loadPlaces();
+  }
+
+  loadPlaces() {
+    this.locationsService.getPlaces().subscribe({
+      next: (places) => {
+        this.sitios = places;
+        this.sitiosFiltrados = [...this.sitios];
+        if (this.map) {
+          this.cargarMarcadores();
+        }
+      },
+      error: (err) => console.error('Error loading places', err)
+    });
   }
 
   ngAfterViewInit(): void {
@@ -64,8 +76,9 @@ export class Explorarmapa implements AfterViewInit {
       polylineOptions: { strokeColor: '#0052A6', strokeWeight: 5 }
     });
 
-    this.cargarMarcadores();
-    this.cargarImagenesIniciales();
+    if (this.sitios.length > 0) {
+      this.cargarMarcadores();
+    }
   }
 
   cargarMarcadores(): void {
@@ -74,9 +87,9 @@ export class Explorarmapa implements AfterViewInit {
 
     this.sitiosFiltrados.forEach((sitio) => {
       const marker = new google.maps.Marker({
-        position: { lat: sitio.lat, lng: sitio.lng },
+        position: { lat: Number(sitio.latitude), lng: Number(sitio.longitude) },
         map: this.map,
-        title: sitio.nombre,
+        title: sitio.name,
         animation: google.maps.Animation.DROP
       });
 
@@ -90,36 +103,37 @@ export class Explorarmapa implements AfterViewInit {
     });
   }
 
-  cargarImagenesIniciales(): void {
-    this.sitios.forEach(sitio => {
-      const request = { query: sitio.nombre + " Bogotá", fields: ['photos', 'place_id'] };
-      this.placesService.findPlaceFromQuery(request, (results: any, status: any) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK && results && results[0]) {
-          if (results[0].photos) sitio.imagen = results[0].photos[0].getUrl({ maxWidth: 400 });
-          sitio.place_id = results[0].place_id;
-        } else {
-          sitio.imagen = 'assets/placeholder.jpg';
-        }
-      });
-    });
-  }
-
-  abrirModalDetalles(sitio: any): void {
+  abrirModalDetalles(sitio: Place): void {
     this.modalVisible = true;
     this.isLoadingDetails = true;
     this.selectedPlaceDetails = { ...sitio };
+    this.localReviews = [];
 
-    setTimeout(() => {
-      this.ngZone.run(() => {
-        if (this.isLoadingDetails) {
-          this.isLoadingDetails = false;
-        }
+    // Fetch local reviews
+    if (sitio.id) {
+      this.locationsService.getPlaceReviews(sitio.id).subscribe({
+        next: (reviews) => {
+          this.localReviews = reviews;
+        },
+        error: (err) => console.error('Error loading local reviews', err)
       });
-    }, 3000);
+    }
 
-    if (sitio.place_id) {
+    // Try to fetch more details from Google if needed, using name
+    const request = { query: sitio.name + " Bogotá", fields: ['place_id'] };
+    this.placesService.findPlaceFromQuery(request, (results: any, status: any) => {
+       if (status === google.maps.places.PlacesServiceStatus.OK && results && results[0]) {
+          const placeId = results[0].place_id;
+          this.fetchGoogleDetails(placeId);
+       } else {
+         this.isLoadingDetails = false;
+       }
+    });
+  }
+
+  fetchGoogleDetails(placeId: string) {
       const request = {
-        placeId: sitio.place_id,
+        placeId: placeId,
         fields: ['name', 'rating', 'formatted_phone_number', 'website', 'opening_hours', 'photos', 'reviews', 'url']
       };
 
@@ -142,9 +156,6 @@ export class Explorarmapa implements AfterViewInit {
           }
         });
       });
-    } else {
-      this.isLoadingDetails = false;
-    }
   }
 
   cerrarModal(): void {
@@ -168,7 +179,7 @@ export class Explorarmapa implements AfterViewInit {
     navigator.geolocation.getCurrentPosition((pos) => {
       const request: any = {
         origin: { lat: pos.coords.latitude, lng: pos.coords.longitude },
-        destination: { lat: destino.lat, lng: destino.lng },
+        destination: { lat: Number(destino.latitude), lng: Number(destino.longitude) },
         travelMode: google.maps.TravelMode.DRIVING
       };
       this.directionsService.route(request, (result: any, status: any) => {
@@ -191,12 +202,12 @@ export class Explorarmapa implements AfterViewInit {
 
   filtrar(cat: string): void {
     this.filtroActual = cat;
-    this.sitiosFiltrados = cat === 'Todos' ? this.sitios : this.sitios.filter(s => s.categoria === cat);
+    this.sitiosFiltrados = cat === 'Todos' ? this.sitios : this.sitios.filter(s => s.category === cat);
     this.cargarMarcadores();
   }
 
   irASitio(sitio: any): void {
-    this.map.setCenter({ lat: sitio.lat, lng: sitio.lng });
+    this.map.setCenter({ lat: Number(sitio.latitude), lng: Number(sitio.longitude) });
     this.map.setZoom(16);
     this.abrirModalDetalles(sitio);
   }

@@ -9,21 +9,22 @@
       </form>
       <nav class="filtros">
         <button [class.active]="filtroActual === 'Todos'" (click)="filtrar('Todos')" class="btn-filtro">Todo</button>
-        <button [class.active]="filtroActual === 'Historia'" (click)="filtrar('Historia')" class="btn-filtro">Historia</button>
-        <button [class.active]="filtroActual === 'Naturaleza'" (click)="filtrar('Naturaleza')" class="btn-filtro">Naturaleza</button>
-        <button [class.active]="filtroActual === 'Cultura'" (click)="filtrar('Cultura')" class="btn-filtro">Cultura</button>
+        <button [class.active]="filtroActual === 'MUSEO'" (click)="filtrar('MUSEO')" class="btn-filtro">Museos</button>
+        <button [class.active]="filtroActual === 'PARQUE'" (click)="filtrar('PARQUE')" class="btn-filtro">Parques</button>
+        <button [class.active]="filtroActual === 'CULTURAL'" (click)="filtrar('CULTURAL')" class="btn-filtro">Cultural</button>
+        <button [class.active]="filtroActual === 'MONUMENTO'" (click)="filtrar('MONUMENTO')" class="btn-filtro">Monumentos</button>
       </nav>
     </header>
 
     <section class="lista-sitios">
       <article class="card-sitio" *ngFor="let sitio of sitiosFiltrados" (click)="irASitio(sitio)">
         <figure class="img-container" 
-             [style.backgroundImage]="sitio.imagen ? 'url(' + sitio.imagen + ')' : 'linear-gradient(#eee, #ddd)'">
+             [style.backgroundImage]="sitio.main_image ? 'url(' + sitio.main_image + ')' : 'linear-gradient(#eee, #ddd)'">
         </figure>
         <div class="info-container">
-          <h4>{{ sitio.nombre }}</h4>
-          <span class="badge" [ngClass]="sitio.categoria.toLowerCase()">{{ sitio.categoria }}</span>
-          <p>{{ sitio.descripcion | slice:0:50 }}...</p>
+          <h4>{{ sitio.name }}</h4>
+          <span class="badge" [ngClass]="sitio.category.toLowerCase()">{{ sitio.category }}</span>
+          <p>{{ sitio.description | slice:0:50 }}...</p>
         </div>
         <div class="arrow-action"><i class="fas fa-chevron-right"></i></div>
       </article>
@@ -39,7 +40,7 @@
     <article class="modal-content" (click)="$event.stopPropagation()">
       
       <header class="modal-header">
-        <h2 *ngIf="selectedPlaceDetails">{{ selectedPlaceDetails.nombre }}</h2>
+        <h2 *ngIf="selectedPlaceDetails">{{ selectedPlaceDetails.name }}</h2>
         <button class="close-btn" (click)="cerrarModal()">✕</button>
       </header>
 
@@ -55,11 +56,11 @@
           <figure class="photos-gallery mb-3" *ngIf="selectedPlaceDetails.photos?.length">
             <img *ngFor="let photo of selectedPlaceDetails.photos" [src]="photo" alt="Foto del lugar">
           </figure>
-          <figure *ngIf="!selectedPlaceDetails.photos?.length && selectedPlaceDetails.imagen" class="photos-gallery mb-3">
-             <img [src]="selectedPlaceDetails.imagen" alt="Foto principal">
+          <figure *ngIf="!selectedPlaceDetails.photos?.length && selectedPlaceDetails.main_image" class="photos-gallery mb-3">
+             <img [src]="selectedPlaceDetails.main_image" alt="Foto principal">
           </figure>
 
-          <p class="desc-text">{{ selectedPlaceDetails.descripcion }}</p>
+          <p class="desc-text">{{ selectedPlaceDetails.description }}</p>
           
           <dl class="info-grid">
             <div class="info-item" *ngIf="selectedPlaceDetails.googleRating">
@@ -85,7 +86,7 @@
           </dl>
 
           <section class="reviews-section mt-3" *ngIf="selectedPlaceDetails.reviews?.length">
-            <h5>Opiniones recientes:</h5>
+            <h5 class="text-success">Opiniones de Google:</h5>
             <article class="review-card" *ngFor="let review of selectedPlaceDetails.reviews">
               <div class="d-flex align-items-center gap-2 mb-1">
                 <img [src]="review.profile_photo_url" class="avatar-mini" alt="Avatar">
@@ -93,6 +94,22 @@
                 <span class="text-warning">★ {{ review.rating }}</span>
               </div>
               <p class="m-0 text-muted small">"{{ review.text | slice:0:100 }}..."</p>
+            </article>
+          </section>
+
+          <section class="reviews-section mt-3" *ngIf="localReviews.length > 0">
+            <h5 class="text-primary">Opiniones de la Comunidad:</h5>
+            <article class="review-card" *ngFor="let review of localReviews">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <!-- Placeholder avatar or user avatar if available -->
+                <div class="avatar-mini bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle" style="width: 30px; height: 30px;">
+                  {{ review.user_username?.charAt(0) | uppercase }}
+                </div>
+                <strong>{{ review.user_username }}</strong>
+                <span class="text-warning">★ {{ review.rating }}</span>
+              </div>
+              <p class="m-0 text-muted small">"{{ review.comment }}"</p>
+              <small class="text-muted" style="font-size: 0.7rem;">{{ review.created_at | date }}</small>
             </article>
           </section>
 

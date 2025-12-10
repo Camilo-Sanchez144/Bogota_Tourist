@@ -1,8 +1,14 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Acceso } from '../services/acceso';
+import { TripsService } from '../services/trips.service';
+import { ExperiencesService } from '../services/experiences.service';
+import { LocationsService } from '../services/locations.service';
+import { Trip } from '../interfaces/Trip';
+import { Post } from '../interfaces/Post';
+import { Place } from '../interfaces/Place';
 import { appsettings } from '../settings/appsettings';
 import { emailValidator, phoneValidator } from '../validators/custom-validators';
 
@@ -12,11 +18,108 @@ import { emailValidator, phoneValidator } from '../validators/custom-validators'
   templateUrl: './dashboard-user.html',
   styleUrl: './dashboard-user.css',
 })
-export class DashboardUser {
+export class DashboardUser implements OnInit {
   private accesoService = inject(Acceso);
+  private tripsService = inject(TripsService);
+  private experiencesService = inject(ExperiencesService);
+  private locationsService = inject(LocationsService);
   private fb = inject(FormBuilder);
+  
   user = JSON.parse(localStorage.getItem("user") || '{}');
+  trips: Trip[] = [];
+  posts: Post[] = [];
+  reviews: any[] = [];
+  placesList: Place[] = [];
+  
+  // Properties for Trip Edit (matching PlanearViaje)
+  categories = [
+    "Historia",
+    "Gastronomía",
+    "Naturaleza",
+    "Vida nocturna",
+    "Arte",
+    "Aventura"
+  ];
+  lugares: string[] = [];
+  selectedlugares: string[] = [];
+  selectedCategories: string[] = [];
+
   nombre = [this.user?.first_name, this.user?.last_name].filter(Boolean).join(' ').trim();
+  ngOnInit(): void {
+    this.loadTrips();
+    this.loadPosts();
+    this.loadPlaces();
+    this.loadReviews();
+  }
+
+  loadPlaces() {
+    this.locationsService.getPlaces().subscribe({
+      next: (places: Place[]) => {
+        this.placesList = places;
+        this.lugares = places.map(p => p.name);
+      },
+      error: (err) => console.error('Error loading places', err)
+    });
+  }
+
+  loadReviews() {
+    this.locationsService.getUserReviews().subscribe({
+      next: (reviews) => {
+        this.reviews = reviews;
+      },
+      error: (err) => console.error('Error loading reviews', err)
+    });
+  }
+
+  togglelugares(lugares: string) {
+    const index = this.selectedlugares.indexOf(lugares);
+    if (index === -1) {
+      this.selectedlugares.push(lugares);
+    } else {
+      this.selectedlugares.splice(index, 1);
+    }
+  }
+
+  toggleCategory(category: string) {
+    const index = this.selectedCategories.indexOf(category);
+    if (index === -1) {
+      this.selectedCategories.push(category);
+    } else {
+      this.selectedCategories.splice(index, 1);
+    }
+  }
+
+  loadTrips() {
+    console.log('Iniciando carga de viajes...');
+    this.tripsService.getTrips().subscribe({
+      next: (trips) => {
+        console.log('Viajes cargados desde el backend:', trips);
+        this.trips = trips;
+        console.log('Variable trips actualizada:', this.trips);
+      },
+      error: (err) => console.error('Error cargando viajes:', err)
+    });
+  }
+
+  loadPosts() {
+    if (this.user?.id) {
+      this.experiencesService.getPostsByUser(this.user.id).subscribe({
+        next: (posts) => {
+          this.posts = posts;
+        },
+        error: (err) => console.error('Error cargando posts:', err)
+      });
+    }
+  }
+
+  get activeTripsCount(): number {
+    return this.trips.filter(t => t.is_active).length;
+  }
+
+  get completedTripsCount(): number {
+    return this.trips.filter(t => !t.is_active).length;
+  }
+
   email = this.user.email;
   cellphone = this.user.cellphone;
   bio: string = this.user.bio || '';
@@ -41,6 +144,88 @@ export class DashboardUser {
   formPasswordVisible = false;
   successMessage = '';
   showSuccess = false;
+
+  // Trip Edit Logic
+  tripFormVisible = false;
+  selectedTripId: number | null = null;
+  
+  tripForm: FormGroup = this.fb.group({
+    title: ['', Validators.required],
+    description: [''],
+    travel_date: ['', Validators.required],
+    number_of_people: [1, [Validators.required, Validators.min(1)]],
+    daily_budget: [''],
+    plan_name: [''],
+    plan_price: [''],
+    is_active: [true]
+  });
+
+  openTripModal(trip: Trip) {
+    this.selectedTripId = trip.id || null;
+    
+    // Parse description to extract categories and places
+    this.selectedCategories = [];
+    this.selectedlugares = [];
+    
+    if (trip.description) {
+      // Robust parsing for Categories
+      const catRegex = /Categorías:\s*(.*?)(?=\.?\s*Lugares:|$)/i;
+      const catMatch = trip.description.match(catRegex);
+      
+      if (catMatch && catMatch[1]) {
+        this.selectedCategories = catMatch[1].split(',').map(c => c.trim()).filter(c => c !== '');
+      }
+      
+      // Robust parsing for Places
+      const lugRegex = /Lugares:\s*(.*)$/i;
+      const lugMatch = trip.description.match(lugRegex);
+      
+      if (lugMatch && lugMatch[1]) {
+        this.selectedlugares = lugMatch[1].split(',').map(l => l.trim()).filter(l => l !== '');
+      }
+    }
+
+    this.tripForm.patchValue({
+      title: trip.title,
+      description: trip.description,
+      travel_date: trip.travel_date,
+      number_of_people: trip.number_of_people,
+      daily_budget: trip.daily_budget,
+      plan_name: trip.plan_name,
+      plan_price: trip.plan_price,
+      is_active: trip.is_active
+    });
+    this.tripFormVisible = true;
+  }
+
+  closeTripModal() {
+    this.tripFormVisible = false;
+    this.selectedTripId = null;
+    this.tripForm.reset();
+    this.selectedCategories = [];
+    this.selectedlugares = [];
+  }
+
+  updateTrip() {
+    if (this.tripForm.invalid || !this.selectedTripId) return;
+    
+    // Reconstruct description
+    const newDescription = `Categorías: ${this.selectedCategories.join(', ')}. Lugares: ${this.selectedlugares.join(', ')}`;
+    this.tripForm.patchValue({ description: newDescription });
+
+    const updatedData = this.tripForm.value;
+    this.tripsService.updateTrip(this.selectedTripId, updatedData).subscribe({
+      next: (res) => {
+        console.log('Trip updated:', res);
+        this.loadTrips(); // Refresh list
+        this.closeTripModal();
+        this.successMessage = 'Viaje actualizado correctamente';
+        this.showSuccess = true;
+        setTimeout(() => this.showSuccess = false, 3000);
+      },
+      error: (err) => console.error('Error updating trip', err)
+    });
+  }
 
   private passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
     const newPassword = group.get('newPassword')?.value;
@@ -168,6 +353,125 @@ export class DashboardUser {
     this.showSuccess = true;
     await new Promise(resolve => setTimeout(resolve, 5000));
     this.showSuccess = false;
+  }
+
+  // Post Edit Logic
+  postFormVisible = false;
+  selectedPostId: number | null = null;
+  selectedPostFile: File | null = null;
+
+  postForm: FormGroup = this.fb.group({
+    title: ['', Validators.required],
+    description: ['', [Validators.required, Validators.minLength(20)]],
+    rating: [5, Validators.required],
+    location: [1, Validators.required]
+  });
+
+  openPostModal(post: Post) {
+    this.selectedPostId = post.id || null;
+    this.postForm.patchValue({
+      title: post.title,
+      description: post.description,
+      rating: post.rating,
+      location: post.location || 1
+    });
+    this.postFormVisible = true;
+  }
+
+  closePostModal() {
+    this.postFormVisible = false;
+    this.selectedPostId = null;
+    this.postForm.reset();
+    this.selectedPostFile = null;
+  }
+
+  onPostFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.selectedPostFile = file;
+    }
+  }
+
+  updatePost() {
+    if (this.postForm.invalid || !this.selectedPostId) return;
+
+    const updatedData = this.postForm.value;
+    this.experiencesService.updatePost(this.selectedPostId, updatedData).subscribe({
+      next: (post) => {
+        if (this.selectedPostFile && this.selectedPostId) {
+          this.experiencesService.uploadPostMedia(this.selectedPostId, this.selectedPostFile).subscribe({
+            next: () => {
+              this.showSuccessMessage('Artículo actualizado correctamente con imagen');
+              this.loadPosts();
+              this.closePostModal();
+            },
+            error: (err) => {
+              console.error('Error uploading image', err);
+              this.showSuccessMessage('Artículo actualizado, pero falló la subida de la imagen');
+              this.loadPosts();
+              this.closePostModal();
+            }
+          });
+        } else {
+          this.showSuccessMessage('Artículo actualizado correctamente');
+          this.loadPosts();
+          this.closePostModal();
+        }
+      },
+      error: (err) => console.error('Error updating post', err)
+    });
+  }
+
+  // Review Logic
+  reviewFormVisible = false;
+  reviewForm: FormGroup = this.fb.group({
+    place: ['', Validators.required],
+    title: ['', Validators.required],
+    comment: ['', [Validators.required, Validators.minLength(10)]],
+    rating: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
+    visit_date: [new Date().toISOString().split('T')[0]]
+  });
+
+  openReviewModal() {
+    this.reviewFormVisible = true;
+  }
+
+  closeReviewModal() {
+    this.reviewFormVisible = false;
+    this.reviewForm.reset({
+      rating: 5,
+      visit_date: new Date().toISOString().split('T')[0]
+    });
+  }
+
+  createReview() {
+    if (this.reviewForm.invalid) {
+      this.reviewForm.markAllAsTouched();
+      return;
+    }
+
+    const reviewData = this.reviewForm.value;
+    // Ensure place is sent as ID
+    if (typeof reviewData.place === 'object') {
+      reviewData.place = reviewData.place.id;
+    }
+
+    this.locationsService.createReview(reviewData).subscribe({
+      next: (res) => {
+        this.showSuccessMessage('Reseña creada exitosamente');
+        this.loadReviews();
+        this.closeReviewModal();
+      },
+      error: (err) => {
+        console.error('Error creating review', err);
+        if (err.error && err.error.error) {
+           // Handle specific errors like "unique_together" if backend returns friendly message
+           alert('Error: ' + err.error.error);
+        } else {
+           alert('Error al crear la reseña. Verifica que no hayas reseñado este lugar antes.');
+        }
+      }
+    });
   }
 
   private resolvePhoto(url?: string | null): string | null {

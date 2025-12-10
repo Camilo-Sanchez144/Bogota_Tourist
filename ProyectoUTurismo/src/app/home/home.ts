@@ -1,13 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SlicePipe } from '@angular/common';
+import { ExperiencesService } from '../services/experiences.service';
+import { Post } from '../interfaces/Post';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
+  imports: [RouterLink, SlicePipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
+export class Home implements OnInit {
+  private experiencesService = inject(ExperiencesService);
+  posts: Post[] = [];
+
+  ngOnInit(): void {
+    this.loadPosts();
+  }
+
+  loadPosts() {
+    this.experiencesService.getPosts().subscribe({
+      next: (data) => {
+        // Show only the first 3 posts
+        this.posts = data.slice(0, 3);
+      },
+      error: (err) => console.error('Error loading posts', err)
+    });
+  }
+
   categorias = ['Todos', 'Salud', 'Hospedaje', 'Transporte', 'Exploración'];
   categoriaSeleccionada = 'Todos';
 
