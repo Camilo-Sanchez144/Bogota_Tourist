@@ -1,6 +1,6 @@
 /// <reference types="google.maps" />
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ElementRef, AfterViewInit, NgZone } from '@angular/core'; // 1. Importamos NgZone
+import { Component, ViewChild, ElementRef, AfterViewInit, NgZone } from '@angular/core';
 
 @Component({
   selector: 'app-explorarmapa',
@@ -21,10 +21,9 @@ export class Explorarmapa implements AfterViewInit {
   filtroActual: string = 'Todos';
   rutaActiva: boolean = false;
   
-  // --- VARIABLES PARA EL MODAL ---
   modalVisible: boolean = false;
-  selectedPlaceDetails: any = null; 
-  isLoadingDetails: boolean = false; 
+  selectedPlaceDetails: any = null;
+  isLoadingDetails: boolean = false;
 
   sitios: any[] = [
     { nombre: 'Monserrate', lat: 4.6058, lng: -74.0555, categoria: 'Naturaleza', descripcion: 'El cerro tutelar de la ciudad.', imagen: '' },
@@ -38,7 +37,6 @@ export class Explorarmapa implements AfterViewInit {
   sitiosFiltrados: any[] = [];
   marcadores: google.maps.Marker[] = [];
 
-  // 2. Inyectamos NgZone en el constructor
   constructor(private ngZone: NgZone) {
     this.sitiosFiltrados = [...this.sitios];
   }
@@ -54,7 +52,7 @@ export class Explorarmapa implements AfterViewInit {
       zoom: 12,
       mapTypeControl: false,
       fullscreenControl: false,
-      styles: [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }] 
+      styles: [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }]
     });
 
     this.infoWindow = new google.maps.InfoWindow();
@@ -82,7 +80,6 @@ export class Explorarmapa implements AfterViewInit {
         animation: google.maps.Animation.DROP
       });
 
-      // 3. CORRECCIÓN CLICK MARCADOR: Usamos ngZone.run()
       marker.addListener('click', () => {
         this.ngZone.run(() => {
           this.abrirModalDetalles(sitio);
@@ -99,9 +96,9 @@ export class Explorarmapa implements AfterViewInit {
       this.placesService.findPlaceFromQuery(request, (results: any, status: any) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && results && results[0]) {
           if (results[0].photos) sitio.imagen = results[0].photos[0].getUrl({ maxWidth: 400 });
-          sitio.place_id = results[0].place_id; 
+          sitio.place_id = results[0].place_id;
         } else {
-          sitio.imagen = 'assets/placeholder.jpg'; 
+          sitio.imagen = 'assets/placeholder.jpg';
         }
       });
     });
@@ -112,12 +109,10 @@ export class Explorarmapa implements AfterViewInit {
     this.isLoadingDetails = true;
     this.selectedPlaceDetails = { ...sitio };
 
-    // 4. CORRECCIÓN PRELOADER: Timeout de seguridad (3 segundos)
     setTimeout(() => {
       this.ngZone.run(() => {
         if (this.isLoadingDetails) {
           this.isLoadingDetails = false;
-          console.log("Timeout de carga finalizado");
         }
       });
     }, 3000);
@@ -129,9 +124,8 @@ export class Explorarmapa implements AfterViewInit {
       };
 
       this.placesService.getDetails(request, (place, status) => {
-        // 5. CORRECCIÓN PRELOADER: Usamos ngZone.run() en el callback de la API
         this.ngZone.run(() => {
-          this.isLoadingDetails = false; // Esto ahora actualizará la vista inmediatamente
+          this.isLoadingDetails = false;
           
           if (status === google.maps.places.PlacesServiceStatus.OK && place) {
             this.selectedPlaceDetails = {
@@ -149,7 +143,7 @@ export class Explorarmapa implements AfterViewInit {
         });
       });
     } else {
-      this.isLoadingDetails = false; 
+      this.isLoadingDetails = false;
     }
   }
 
@@ -158,10 +152,9 @@ export class Explorarmapa implements AfterViewInit {
     this.selectedPlaceDetails = null;
   }
 
-  // 6. CORRECCIÓN RUTA: Guardamos la referencia antes de borrarla
   calcularRutaDesdeModal(): void {
-    const destinoGuardado = this.selectedPlaceDetails; // Guardamos antes de cerrar
-    this.cerrarModal(); // Ahora selectedPlaceDetails es null, pero tenemos destinoGuardado
+    const destinoGuardado = this.selectedPlaceDetails;
+    this.cerrarModal();
     
     if (destinoGuardado) {
       this.calcularRuta(destinoGuardado);
@@ -170,7 +163,6 @@ export class Explorarmapa implements AfterViewInit {
 
   calcularRuta(destino: any): void {
     if (!navigator.geolocation) {
-      alert("Navegador sin soporte GPS");
       return;
     }
     navigator.geolocation.getCurrentPosition((pos) => {
@@ -180,14 +172,14 @@ export class Explorarmapa implements AfterViewInit {
         travelMode: google.maps.TravelMode.DRIVING
       };
       this.directionsService.route(request, (result: any, status: any) => {
-        this.ngZone.run(() => { // Buena práctica envolver esto también
+        this.ngZone.run(() => {
           if (status === 'OK') {
             this.directionsRenderer.setDirections(result);
             this.rutaActiva = true;
-          } else alert('Error ruta: ' + status);
+          }
         });
       });
-    }, () => alert("Acceso GPS denegado"));
+    });
   }
 
   limpiarRuta(): void {
@@ -206,6 +198,6 @@ export class Explorarmapa implements AfterViewInit {
   irASitio(sitio: any): void {
     this.map.setCenter({ lat: sitio.lat, lng: sitio.lng });
     this.map.setZoom(16);
-    this.abrirModalDetalles(sitio); 
+    this.abrirModalDetalles(sitio);
   }
 }

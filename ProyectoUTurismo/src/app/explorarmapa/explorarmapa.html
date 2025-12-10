@@ -1,116 +1,113 @@
-<div class="map-layout">
+<main class="map-layout">
   
-  <!-- BARRA LATERAL -->
-  <div class="sidebar">
-    <div class="sidebar-header">
+  <aside class="sidebar">
+    <header class="sidebar-header">
       <h2 class="titulo-seccion m-0 mb-3">Explora Bogotá</h2>
-      <div class="search-box mb-3">
+      <form class="search-box mb-3">
         <i class="fas fa-search"></i>
         <input type="text" placeholder="Buscar sitio turístico..." />
-      </div>
-      <div class="filtros">
+      </form>
+      <nav class="filtros">
         <button [class.active]="filtroActual === 'Todos'" (click)="filtrar('Todos')" class="btn-filtro">Todo</button>
         <button [class.active]="filtroActual === 'Historia'" (click)="filtrar('Historia')" class="btn-filtro">Historia</button>
         <button [class.active]="filtroActual === 'Naturaleza'" (click)="filtrar('Naturaleza')" class="btn-filtro">Naturaleza</button>
         <button [class.active]="filtroActual === 'Cultura'" (click)="filtrar('Cultura')" class="btn-filtro">Cultura</button>
-      </div>
-    </div>
+      </nav>
+    </header>
 
-    <div class="lista-sitios">
-      <div class="card-sitio" *ngFor="let sitio of sitiosFiltrados" (click)="irASitio(sitio)">
-        <div class="img-container" 
+    <section class="lista-sitios">
+      <article class="card-sitio" *ngFor="let sitio of sitiosFiltrados" (click)="irASitio(sitio)">
+        <figure class="img-container" 
              [style.backgroundImage]="sitio.imagen ? 'url(' + sitio.imagen + ')' : 'linear-gradient(#eee, #ddd)'">
-        </div>
+        </figure>
         <div class="info-container">
           <h4>{{ sitio.nombre }}</h4>
           <span class="badge" [ngClass]="sitio.categoria.toLowerCase()">{{ sitio.categoria }}</span>
           <p>{{ sitio.descripcion | slice:0:50 }}...</p>
         </div>
         <div class="arrow-action"><i class="fas fa-chevron-right"></i></div>
-      </div>
-    </div>
-  </div>
+      </article>
+    </section>
+  </aside>
 
-  <!-- MAPA -->
-  <div class="map-wrapper">
+  <section class="map-wrapper">
     <button *ngIf="rutaActiva" (click)="limpiarRuta()" class="btn-limpiar-ruta">❌ Borrar Ruta</button>
     <div #mapContainer class="google-map"></div>
-  </div>
+  </section>
 
-  <!-- === MODAL DETALLES === -->
-  <div class="modal-overlay" [class.active]="modalVisible" (click)="cerrarModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+  <dialog class="modal-overlay" [class.active]="modalVisible" (click)="cerrarModal()">
+    <article class="modal-content" (click)="$event.stopPropagation()">
       
-      <div class="modal-header">
+      <header class="modal-header">
         <h2 *ngIf="selectedPlaceDetails">{{ selectedPlaceDetails.nombre }}</h2>
         <button class="close-btn" (click)="cerrarModal()">✕</button>
-      </div>
+      </header>
 
-      <div class="modal-body" *ngIf="selectedPlaceDetails">
+      <section class="modal-body" *ngIf="selectedPlaceDetails">
         
-        <!-- Spinner Carga -->
         <div *ngIf="isLoadingDetails" class="text-center p-4">
           <div class="spinner-border text-primary" role="status"></div>
           <p>Cargando detalles de Google...</p>
         </div>
 
-        <!-- Contenido -->
         <div *ngIf="!isLoadingDetails">
           
-          <!-- Galería de Fotos Google (Scroll horizontal) -->
-          <div class="photos-gallery mb-3" *ngIf="selectedPlaceDetails.photos?.length">
+          <figure class="photos-gallery mb-3" *ngIf="selectedPlaceDetails.photos?.length">
             <img *ngFor="let photo of selectedPlaceDetails.photos" [src]="photo" alt="Foto del lugar">
-          </div>
-          <div *ngIf="!selectedPlaceDetails.photos?.length && selectedPlaceDetails.imagen" class="photos-gallery mb-3">
+          </figure>
+          <figure *ngIf="!selectedPlaceDetails.photos?.length && selectedPlaceDetails.imagen" class="photos-gallery mb-3">
              <img [src]="selectedPlaceDetails.imagen" alt="Foto principal">
-          </div>
+          </figure>
 
           <p class="desc-text">{{ selectedPlaceDetails.descripcion }}</p>
           
-          <div class="info-grid">
+          <dl class="info-grid">
             <div class="info-item" *ngIf="selectedPlaceDetails.googleRating">
-              <strong>⭐ Calificación:</strong> {{ selectedPlaceDetails.googleRating }} / 5
+              <dt>⭐ Calificación:</dt>
+              <dd>{{ selectedPlaceDetails.googleRating }} / 5</dd>
             </div>
             <div class="info-item" *ngIf="selectedPlaceDetails.openNow !== undefined">
-              <strong>🕒 Estado:</strong> 
-              <span [class.text-success]="selectedPlaceDetails.openNow" [class.text-danger]="!selectedPlaceDetails.openNow">
-                {{ selectedPlaceDetails.openNow ? 'Abierto Ahora' : 'Cerrado' }}
-              </span>
+              <dt>Estado:</dt>
+              <dd>
+                <span [class.text-success]="selectedPlaceDetails.openNow" [class.text-danger]="!selectedPlaceDetails.openNow">
+                  {{ selectedPlaceDetails.openNow ? 'Abierto Ahora' : 'Cerrado' }}
+                </span>
+              </dd>
             </div>
             <div class="info-item" *ngIf="selectedPlaceDetails.phone">
-              <strong>📞 Teléfono:</strong> {{ selectedPlaceDetails.phone }}
+              <dt>Teléfono:</dt>
+              <dd>{{ selectedPlaceDetails.phone }}</dd>
             </div>
             <div class="info-item" *ngIf="selectedPlaceDetails.website">
-              <strong>🌐 Web:</strong> <a [href]="selectedPlaceDetails.website" target="_blank">Visitar sitio</a>
+              <dt>Web:</dt>
+              <dd><a [href]="selectedPlaceDetails.website" target="_blank">Visitar sitio</a></dd>
             </div>
-          </div>
+          </dl>
 
-          <!-- Reseñas -->
-          <div class="reviews-section mt-3" *ngIf="selectedPlaceDetails.reviews?.length">
-            <h5>💬 Opiniones recientes:</h5>
-            <div class="review-card" *ngFor="let review of selectedPlaceDetails.reviews">
+          <section class="reviews-section mt-3" *ngIf="selectedPlaceDetails.reviews?.length">
+            <h5>Opiniones recientes:</h5>
+            <article class="review-card" *ngFor="let review of selectedPlaceDetails.reviews">
               <div class="d-flex align-items-center gap-2 mb-1">
-                <img [src]="review.profile_photo_url" class="avatar-mini">
+                <img [src]="review.profile_photo_url" class="avatar-mini" alt="Avatar">
                 <strong>{{ review.author_name }}</strong>
                 <span class="text-warning">★ {{ review.rating }}</span>
               </div>
               <p class="m-0 text-muted small">"{{ review.text | slice:0:100 }}..."</p>
-            </div>
-          </div>
+            </article>
+          </section>
 
-          <!-- Botones de Acción -->
-          <div class="action-buttons mt-4">
+          <nav class="action-buttons mt-4">
             <button class="btn-primary-action" (click)="calcularRutaDesdeModal()">
-              🚗 Cómo llegar
+              Cómo llegar
             </button>
             <a *ngIf="selectedPlaceDetails.googleUrl" [href]="selectedPlaceDetails.googleUrl" target="_blank" class="btn-secondary-action">
-              🗺️ Ver en Google Maps
+              Ver en Google Maps
             </a>
-          </div>
+          </nav>
 
         </div>
-      </div>
-    </div>
-  </div>
+      </section>
+    </article>
+  </dialog>
 
-</div>
+</main>
