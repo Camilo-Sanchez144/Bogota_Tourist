@@ -1,0 +1,260 @@
+.carousel img{
+  height: 600px;
+  filter: brightness(0.6);
+}
+.carousel-caption-global {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  text-align: center;
+  z-index: 10;
+  text-shadow: 2px 2px 5px black;
+}
+
+.carousel-caption-global h3 {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.carousel-caption-global p {
+  font-size: 1.2rem;
+}
+.textup{
+  color:rgb(255, 153, 0);
+}
+.articulos{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  justify-content: space-between;
+  align-items: center;
+}
+.articulos h2{
+  color: rgb(255, 153, 0);
+  font-family: "Noto Sans Kannada", sans-serif;
+  font-size: 12px;
+}
+.articulos h3{
+  font-family: 'Times New Roman', Times, serif;
+  color: black;
+  font-size: 50px;
+}
+.articulosdescripcion{
+  gap:30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.articulosdescripcion .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 22rem;
+  max-width: 100%;
+}
+.articulosdescripcion .card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+.boton{
+  border: 2px solid #0052a6;
+  color: #0052a6;
+}
+.boton:hover{
+  background-color: #0052a6;
+  color: white;
+}
+.fondo-full {
+  width: 100%;
+  background-color: #fff5f5;
+  padding: 40px 0;
+}
+.guias {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  justify-content: space-between;
+  align-items: center;
+}
+.guias h4{
+  color: rgb(255, 153, 0);
+  font-family: "Noto Sans Kannada", sans-serif;
+  font-size: 12px;
+}
+.guias h5{
+  font-family: 'Times New Roman', Times, serif;
+  color: black;
+  font-size: 50px;
+}
+.contenedor-cards {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card-modern {
+  background: white;
+  padding: 35px;
+  width: 340px;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.05);
+  transition: 0.3s ease;
+}
+.card-modern:hover {
+  border-color: #0052a6;
+  transform: translateY(-5px);
+}
+.card-modern h3 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+.card-modern p {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 20px;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tags span {
+  font-size: 13px;
+  background: #f0eff0;
+  padding: 5px 12px;
+  border-radius: 12px;
+  color: #6d6d6d;
+}
+.fondo-full2 {
+  width: 100%;
+  background-color: #0052a6;
+  padding: 40px 0;
+}
+.explorar{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+.explorar h5{
+  font-family:'Times New Roman', Times, serif ;
+  text-align: center;
+  font-size: 40px;
+}
+.explorar p{
+  text-align: center;
+}
+.botonexplorar{
+  background-color: #ffa200;
+  color: white;
+  padding: 0.7%;
+}
+.botonexplorar:hover{
+  background-color: #d88901;
+}
+.botonleerarticulos{
+  color: white;
+  border: 2px white solid;
+  padding: 0.7%;
+}
+.botonleerarticulos:hover{
+  background-color: #0052a6;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+
+#guias,
+#explorar {
+  scroll-margin-top: 90px;
+}
+.categorias {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.categorias button {
+  background: #eee;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.categorias button.active {
+  background: black;
+  color: white;
+}
+
+.lista-cards {
+  max-width: 800px; 
+  width: 100%;
+  margin: 0 auto;
+}
+
+.lista-cards .card {
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  cursor: pointer;
+  width: 100%;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-header .icono img {
+  width: 50px;
+  margin-left: -10px;
+}
+.icono img{
+  height: 40px;
+  max-width: 40px;
+  margin-right: 10px;
+}
+
+.card-header .info {
+  flex: 1;
+}
+
+.card-header .info h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.card-header .info p {
+  margin: 3px 0 0 0;
+  font-size: 14px;
+}
+
+.arrow span {
+  font-size: 20px;
+  display: inline-block;
+  transition: transform 0.28s ease;
+  transform-origin: center center;
+}
+
+.arrow span.rotar {
+  transform: rotate(180deg);
+}
+
+.card-body {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #444;
+}

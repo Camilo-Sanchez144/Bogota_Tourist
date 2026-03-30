@@ -1,0 +1,174 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+body{
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+}
+.contenedor {
+  display: flex;
+  padding-inline: 0;
+  height: 100vh;
+  width: 100%;
+}
+
+.columna {
+  flex: 1;
+  padding: 20px;
+  background-image: url('/assets/images/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+.columna2 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.columna h1{
+    font-size: 50px;
+    font-family: "Archivo Black", sans-serif;
+}
+.columna p{
+    font-size: 18px;
+}
+
+.container-login{
+  background-color: #ffffff;
+  padding-inline: 10%;
+  padding-top: 5%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+.container-login button{
+  margin-bottom: 2%;
+}
+.container-login label{
+  display: block;
+
+  color: black;
+}
+.container-login input{
+    width: 100%;
+    background-color: rgb(244, 244, 244);
+    border-radius: 10px;
+    border: 2px solid rgb(184, 184, 184);
+    height: 35px;
+}
+
+.botones .btn.active,
+.botones .btn:focus {
+  background-color: #0052a6;
+  color: #fff;
+  border-color: rgba(0,0,0,0.1);
+}
+.login-content{
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.login-content img{
+  height: 40px;
+  margin-bottom: 1rem;
+}
+.login-content h1{
+  font-size: 20px;
+}
+.btn-login{
+  background-color: #0052a6;
+  color: #ffffff;
+}
+.error {
+  color: red;
+}
+
+input.error {
+  border: 2px solid rgb(255, 149, 149);
+  background-color: rgb(255, 208, 208);
+}
+
+/* more specific selectors to ensure background and label color change */
+.container-login input.error,
+.form-login input.error,
+.container-login input.error:focus {
+  background-color: rgb(255, 208, 208);
+  color: #8b0000;
+}
+.container-login label.error,
+.form-login label.error {
+  color: #8b0000;
+}
+.error-message {
+  color: #b00020;
+  background: rgba(176,0,32,0.05);
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+.succes-message{
+  color: #048548;              
+  background: #d1e7dd;         
+  border: 1px solid #229e03;   
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-weight: 600;
+}
+.form-signup input{
+  margin-bottom: 1%;;
+}
+.form-control {
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  transition: 0.3s ease;
+}
+
+.form-control::placeholder {
+  color: #888;
+  opacity: 0.7;
+}
+
+.form-control:focus {
+  border-color: #1976d2;
+  box-shadow: 0px 0px 4px rgba(25,118,210,0.4);
+  outline: none;
+}
+
+/* Estilos para los mensajes de error en tiempo real */
+.text-danger {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+  min-height: 1.25rem;
+  height: 1.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Validación visual: borde rojo si hay error */
+input:invalid:not(:placeholder-shown) {
+  border-color: #dc3545 !important;
+  background-color: rgba(220, 53, 69, 0.05);
+}
+
+/* Borde verde si es válido */
+input:valid:not(:placeholder-shown) {
+  border-color: #28a745 !important;
+}

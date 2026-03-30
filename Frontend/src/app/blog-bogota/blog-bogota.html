@@ -1,0 +1,75 @@
+<div class="container mt-4">
+    <button class="btn" routerLink="/home">
+      <img src="assets/images/BackArrow.png" alt="ImgBackArrow">
+      Volver al Inicio
+    </button>
+  </div>
+  <div class="title mt-2">
+    <h1><b>Blog de Bogotá</b></h1>
+    <p>Historias profundas sobre la historia de Colombia, su gastronomía, cultura y experiencias auténticas.</p>
+  </div>
+  <h2 class="text-center p-5 text-danger consumoapi">Experiencias Recientes</h2>
+
+  <div class="container">
+    <div class="d-flex justify-content-end mb-2" style="padding-right: 5%;">
+      <button class="btn btn-sm btn-outline-primary" (click)="loadPosts()">↻ Recargar Artículos</button>
+    </div>
+    <div class="row">
+      @for (post of posts; track post.id) {
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            <!-- Placeholder image since we don't have media yet -->
+            <img [src]="post.image ? 'http://127.0.0.1:8000' + post.image : 'assets/images/imagecard1.jpg'" class="card-img-top" alt="Post image">
+            <div class="card-body">
+              <h5 class="card-title font-weight-bold">{{ post.title || 'Sin título' }}</h5>
+              <div class="mb-2">
+                <span class="badge bg-warning text-dark">★ {{ post.rating }}/5</span>
+              </div>
+              <p class="card-text">{{ post.description | slice:0:150 }}...</p>
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <small class="text-muted"><i class="fas fa-heart"></i> {{ post.likes_count }} Likes</small>
+                <small class="text-muted"><i class="fas fa-comment"></i> {{ post.comments_count }} Comentarios</small>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+              <small class="text-muted">Publicado el {{ post.created_at | date:'mediumDate' }}</small>
+            </div>
+          </div>
+        </div>
+      }
+      @if (posts.length === 0) {
+        <div class="col-12 text-center">
+          <p class="text-muted">No hay artículos publicados aún. ¡Sé el primero!</p>
+        </div>
+      }
+    </div>
+  </div>
+
+<div class="subirArticuloBoton">
+  <h2 class="text-center">¿Te gustaría compartir tus conocimientos con otros?</h2>
+  <button class="btn" (click)="openForm()">Añadir Articulo</button>
+</div>
+<div class="modal" [class.active]="formVisible" #modal>
+  <div class="modal-content">
+    <div class="d-flex justify-content-between">
+    <h2>Subir Articulo <hr></h2>
+    <button class="close-btn" (click)="closeForm()">Cerrar</button>
+    </div>
+    <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+      <label>Título del Artículo</label>
+      <input type="text" formControlName="title" placeholder="Titulo Articulo"/>
+
+      <label>Descripción</label>
+      <textarea class="textarea-grande" formControlName="description" placeholder="Cuenta tu experiencia..."></textarea>
+
+      <label>Calificación (1-5)</label>
+      <input type="number" formControlName="rating" min="1" max="5">
+
+      <label>Imagen de Portada</label>
+      <input type="file" (change)="onFileSelected($event)" accept="image/*">
+
+      <button type="submit" class="btn btn-enviar" [disabled]="postForm.invalid">Enviar</button>
+    </form>
+  </div>
+</div>
+
