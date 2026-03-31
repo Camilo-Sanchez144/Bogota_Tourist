@@ -1,0 +1,23 @@
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne} from "typeorm"
+import User from '../users/user.entity'
+
+@Entity('userProfile')
+class UserProfile extends BaseEntity{
+    @PrimaryGeneratedColumn()
+    id!:Number;
+
+   @Column()
+    bio!:String;
+
+    @Column()
+    profile_picture!: String;
+
+    @Column()
+    date_of_birth!:Date
+
+    @OneToOne(() => User, (user) => user.profile)
+    @JoinColumn({name:'user_id'})  
+    user!: User;
+
+}   
+export default UserProfile

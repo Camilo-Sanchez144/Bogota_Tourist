@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn} from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne} from "typeorm"
+import UserProfile from '../userProfile/userProfile.entity'
 
 @Entity('users')
 export class User extends BaseEntity{
@@ -24,14 +25,10 @@ export class User extends BaseEntity{
     @Column()
     cellphone!:number;
 
-    @Column()
-    bio!:String;
-
-    @Column()
-    profile_picture!: String;
-
-    @Column()
-    date_of_birth!:Date
+    @OneToOne(() => UserProfile, (profile) => profile.user, {
+        eager: true
+    })
+    profile!: UserProfile
 
     @CreateDateColumn()
     created_at!:Date
@@ -39,3 +36,4 @@ export class User extends BaseEntity{
     @UpdateDateColumn()
     updated_at!:Date
 }
+export default User
