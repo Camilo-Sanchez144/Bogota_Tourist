@@ -1,12 +1,59 @@
 import { User } from './user.entity'
 export class UserService{
+    async ConsultarUsuarios(){
+        const consultar = await User.find({where:{status:1}})
+        return consultar
+    }
+    async ConsultarUsuarioDetalle(id:any){
+        const userId = await User.findOneBy({id:Number(id)})
+        if(!userId){
+            throw new Error('Usuario no encontrado')
+        }
+        return userId
+    }
     async AgregarUsuario(data:any){
         
-        const crearUser = new User();
-        crearUser.first_name = data.first_name
-        crearUser.last_name = data.last_name
-        crearUser.email = data.email
-        crearUser.cellphone = data.email
-        crearUser.password = data.password
+        const createUser = new User();
+        createUser.username = data.username;
+        createUser.first_name = data.first_name
+        createUser.last_name = data.last_name
+        createUser.email = data.email
+        createUser.cellphone = data.cellphone
+        createUser.password = data.password
+        createUser.status = 1
+
+        await createUser.save()
+
+        return createUser
+
+    }
+    async ActualizarUsuario(id:any, data:any){
+        const registro = await User.findOneBy({id:Number(id)})
+        if(!registro){
+            throw new Error("Usuario no encontrado");
+        }
+        if(registro.status===0){
+            throw new Error("Usuario desactivado");
+        }
+        registro.username = data.username;
+        registro.first_name= data.first_name;
+        registro.last_name = data.last_name;
+        registro.email = data.email;
+        registro.cellphone = data.cellphone;
+        registro.password = data.password
+
+        await registro.save();
+
+        return registro;
+    }
+    async BorrarUsuario(id:any){
+        const user = await User.findOneBy({id:Number(id)})
+        if(!user){
+            throw new Error("Usuario no encontrado");
+        }
+        user.status = 0
+
+        await user.save()
+        return user;
     }
 }

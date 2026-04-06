@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne} from "typeorm"
 import User from '../users/user.entity'
 
-@Entity('userProfile')
+@Entity('user_profile')
 class UserProfile extends BaseEntity{
     @PrimaryGeneratedColumn()
     id!:Number;

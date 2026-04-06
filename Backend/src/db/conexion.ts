@@ -1,4 +1,6 @@
 import { DataSource } from "typeorm"
+import  User  from '../users/user.entity'
+import UserProfile from "../userProfile/UserProfile.entity"
 
 
 export const AppDataSource = new DataSource({
@@ -7,8 +9,8 @@ export const AppDataSource = new DataSource({
     port: 3306,
     username: "root",
     password: "",
-    database: "Turismo",
+    database: "turismo",
     logging:true,
-    entities:[],
-    synchronize:false
+    entities:[UserProfile,User],
+    synchronize:true
 });

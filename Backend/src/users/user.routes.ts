@@ -4,6 +4,10 @@ import userController from './user.controller';
 //Middleware
 const router = express.Router();
 
-router.get('/', userController.consultar)
-router.post('/')
+router.get('/', userController.ConsultarUsuario)
+router.post('/', userController.AgregarUsuario)
+router.route('/:id')
+    .get(userController.ConsultarUsuarioDetalle)
+    .put(userController.ActualizarUsuario)
+    .delete(userController.BorrarUsuario)
 export default router

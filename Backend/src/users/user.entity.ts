@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne} from "typeorm"
-import UserProfile from '../userProfile/userProfile.entity'
+import UserProfile from '../userProfile/UserProfile.entity'
 
 @Entity('users')
 export class User extends BaseEntity{
@@ -35,5 +35,8 @@ export class User extends BaseEntity{
 
     @UpdateDateColumn()
     updated_at!:Date
+
+    @Column()
+    status!:Number;
 }
 export default User
