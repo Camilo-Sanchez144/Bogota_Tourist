@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import { User } from './user.entity'
 import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
-import { UserDto } from './user.dto';
-import { UserService } from './user.service'
+import { UserDto } from './User.dto';
+import { UserService } from './User.service'
 class UserController{
 
     async ConsultarUsuario(req: Request, res: Response){

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne} from "typeorm"
-import UserProfile from '../userProfile/UserProfile.entity'
+import UserProfile from '../UserProfile/UserProfile.entity'
 
 @Entity('users')
 export class User extends BaseEntity{
@@ -7,20 +7,20 @@ export class User extends BaseEntity{
     @PrimaryGeneratedColumn()
     id!:number;
 
-    @Column()
-    username!:String;
+    @Column({ unique: true })
+    username!:string;
 
     @Column({ unique: true })
-    email!:String;
+    email!:string;
 
     @Column()
-    password!:String;
+    password!:string;
 
     @Column()
-    first_name!:String;
+    first_name!:string;
 
     @Column()
-    last_name!:String;
+    last_name!:string;
 
     @Column()
     cellphone!:number;

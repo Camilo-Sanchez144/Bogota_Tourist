@@ -1,4 +1,5 @@
-import { User } from './user.entity'
+import { User } from './User.entity'
+import bcrypt from 'bcrypt';
 export class UserService{
     async ConsultarUsuarios(){
         const consultar = await User.find({where:{status:1}})
@@ -12,14 +13,15 @@ export class UserService{
         return userId
     }
     async AgregarUsuario(data:any){
-        
+        const hashedPassword = await bcrypt.hash(data.password, 10)
+
         const createUser = new User();
         createUser.username = data.username;
         createUser.first_name = data.first_name
         createUser.last_name = data.last_name
         createUser.email = data.email
         createUser.cellphone = data.cellphone
-        createUser.password = data.password
+        createUser.password = hashedPassword
         createUser.status = 1
 
         await createUser.save()
@@ -28,6 +30,7 @@ export class UserService{
 
     }
     async ActualizarUsuario(id:any, data:any){
+        const hashedPassword = await bcrypt.hash(data.password, 10)
         const registro = await User.findOneBy({id:Number(id)})
         if(!registro){
             throw new Error("Usuario no encontrado");
@@ -40,7 +43,7 @@ export class UserService{
         registro.last_name = data.last_name;
         registro.email = data.email;
         registro.cellphone = data.cellphone;
-        registro.password = data.password
+        registro.password = hashedPassword;
 
         await registro.save();
 
