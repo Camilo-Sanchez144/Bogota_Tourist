@@ -7,5 +7,8 @@ class UserProfileService{
         }
         return userFind
     }
+    async AgregarUsuario(data:any){
+        
+    }
 }
 export default UserProfileService
