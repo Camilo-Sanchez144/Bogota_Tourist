@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne} from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany} from "typeorm"
 import UserProfile from '../UserProfile/UserProfile.entity'
-
+import Post from '../Posts/Post.entity'
 @Entity('users')
 export class User extends BaseEntity{
 
@@ -29,6 +29,9 @@ export class User extends BaseEntity{
         eager: true
     })
     profile!: UserProfile
+
+    @OneToMany(()=>Post, (post) =>post.user)
+    posts!: Post[]
 
     @CreateDateColumn()
     created_at!:Date

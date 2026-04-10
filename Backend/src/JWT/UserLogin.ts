@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { User } from '../User/User.entity'
-export class UserLogin{
+class UserLogin{
     async userLogin(req:Request, res:Response){
         try{
             const { email, password } = req.body

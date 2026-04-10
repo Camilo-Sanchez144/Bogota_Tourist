@@ -35,7 +35,7 @@ class UserController{
             const service = new UserService()
             const dto = plainToInstance( UserDto, req.body )
             const errors = await validate(dto)
-            if(errors.length >= 0){
+            if(errors.length > 0){
                 return res.status(400).json({mensaje:'Error en la validación', errors})
             }
             const userRegistro = await service.AgregarUsuario(dto)

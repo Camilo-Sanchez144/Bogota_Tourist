@@ -6,7 +6,7 @@ class UserProfile extends BaseEntity{
     @PrimaryGeneratedColumn()
     id!:Number;
 
-   @Column()
+   @Column({type: 'text'})
     bio!:String;
 
     @Column()
