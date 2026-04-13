@@ -26,13 +26,16 @@ export class Post extends BaseEntity{
     @Column()
     comments_count!:number;
 
+    @Column()
+    imageUrl!:string;
+    
     @Column({default : true})
     is_active!:boolean
 
-    @Column()
+    @CreateDateColumn()
     created_at!:Date;
 
-    @Column()
+    @UpdateDateColumn()
     updated_at!:Date;
 }
 export default Post

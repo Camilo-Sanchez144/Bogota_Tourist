@@ -1,4 +1,4 @@
-import UserProfile from './UserProfile.entity'
+import UserProfile from './userProfile.entity'
 import User from '../User/User.entity'
 class UserProfileService{
     async ConsultarUsuario(id:any){
