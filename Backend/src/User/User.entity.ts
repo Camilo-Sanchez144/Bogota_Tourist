@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany} from "typeorm"
-import UserProfile from '../UserProfile/userProfile.entity'
+import UserProfile from '../UserProfile/UserProfile.entity'
 import Post from '../Posts/Post.entity'
 @Entity('users')
 export class User extends BaseEntity{

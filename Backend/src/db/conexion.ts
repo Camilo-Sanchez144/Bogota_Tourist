@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm"
 import  User  from '../User/User.entity'
-import UserProfile from "../UserProfile/userProfile.entity"
+import UserProfile from "../UserProfile/UserProfile.entity"
 import Post from '../Posts/Post.entity'
 
 export const AppDataSource = new DataSource({

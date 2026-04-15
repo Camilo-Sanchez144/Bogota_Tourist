@@ -8,5 +8,6 @@ router.post('/', userController.AgregarUsuario)
 router.route('/:id')
     .get(userController.ConsultarUsuarioDetalle)
     .put(userController.ActualizarUsuario)
+    .patch(userController.ActualizarUserParcial)
     .delete(userController.BorrarUsuario)
 export default router

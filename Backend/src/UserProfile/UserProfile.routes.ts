@@ -7,6 +7,7 @@ const router = express.Router();
 router.get('/:userId/profile', UserProfileController.ConsultarUsuario)
 router.post('/:userId/profile', UserProfileController.AgregarUsuario)
 router.put('/:userId/profile', UserProfileController.ActualizarUsuario)
+router.patch('/:userId/profile', UserProfileController.ActualizarUserProfileParcial)
 router.delete('/:userId/profile', UserProfileController.BorrarUsuario)
 
 export default router

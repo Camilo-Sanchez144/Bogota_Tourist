@@ -3,6 +3,7 @@ import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
 import { UserDto } from './User.dto';
 import { UserService } from './User.service'
+import { UpdateUserDto } from './UpdateUser.dto'
 class UserController{
 
     async ConsultarUsuario(req: Request, res: Response){
@@ -56,6 +57,22 @@ class UserController{
             }
             const registro = await service.ActualizarUsuario(id, dto)
             res.status(201).json(registro)
+        }catch(err){
+            if(err instanceof Error)
+            res.status(400).send(err.message)
+        }
+    }
+    async ActualizarUserParcial(req:Request, res:Response){
+        try{
+            const service = new UserService()
+            const id = req.params.id
+            const dto = plainToInstance( UpdateUserDto, req.body )
+            const errors = await validate(dto)
+            if(errors.length > 0){
+                return res.status(400).json({mensaje:'Error en la validación', errors})
+            }
+            const registro = await service.ActualizarUsuario(id, dto)
+            res.status(200).json(registro)
         }catch(err){
             if(err instanceof Error)
             res.status(400).send(err.message)

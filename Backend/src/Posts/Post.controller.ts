@@ -3,6 +3,7 @@ import { Post } from './Post.service';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { PostDto } from './Post.dto';
+import { UpdatePostDto } from './UpdatePost.dto';
 
 class PostController{
     async ConsultarPosts(req: Request, res: Response){
@@ -71,10 +72,7 @@ class PostController{
         try{
             const postService = new Post();
             const id = req.params.id
-            console.log(id)
-            console.log(req.body)
             const dto = plainToInstance(PostDto, req.body)
-            console.log(dto)
             const errors =await validate(dto)
             if(errors.length > 0){
                 return res.status(400).json({mensaje:'Error en la validación', errors})
@@ -85,6 +83,41 @@ class PostController{
         }catch(err){
             if(err instanceof Error){
             res.status(500).send(err.message);
+            }
+        }
+    }
+    async ActualizarPostParcial(req: Request, res: Response) {
+        try {
+            const postService = new Post();
+            const id = req.params.id;
+
+            const dto = plainToInstance(UpdatePostDto, req.body);
+            const errors = await validate(dto);
+            if (errors.length > 0) {
+                return res.status(400).json({ mensaje: 'Error en la validación', errors });
+            }
+
+            const imageUrl = (req.file as any)?.secure_url ?? req.file?.path;
+            const data = { ...dto, ...(imageUrl && { imageUrl }) };
+
+            const updatedPost = await postService.ActualizarPostParcial(id, data);
+            res.json(updatedPost);
+
+        } catch (err) {
+            if (err instanceof Error) {
+                res.status(500).send(err.message);
+            }
+        }
+    }
+    async BorrarPost(req: Request, res: Response){
+        try{
+            const id = req.params.id
+            const postService = new Post();
+            await postService.BorrarPost(id);
+            return res.status(204).send()
+        }catch (err) {
+            if (err instanceof Error) {
+                res.status(500).send(err.message);
             }
         }
     }

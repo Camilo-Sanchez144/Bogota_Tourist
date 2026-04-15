@@ -1,28 +1,27 @@
-import { IsNotEmpty, IsString, IsNumber, IsEmail } from "class-validator";
-import { Type } from "class-transformer";
-export class UserDto{
+import { IsNotEmpty, IsOptional } from "class-validator";
+export class UpdateUserDto{
 
     @IsNotEmpty()
-    @IsString()
+    @IsOptional()
     username!:String;
 
     @IsNotEmpty()
-    @IsEmail()
+    @IsOptional()
     email!:String;
 
     @IsNotEmpty()
-    @IsString()
+    @IsOptional()
     password!:String;
 
     @IsNotEmpty()
-    @IsString()
+    @IsOptional()
     first_name!:String;
 
     @IsNotEmpty()
-    @IsString()
+    @IsOptional()
     last_name!:String;
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsOptional()
     cellphone!:number;
 }

@@ -42,4 +42,16 @@ export class Post{
         
         return post;
     }
+    async ActualizarPostParcial(id: any, data: any) {
+        await Posts.update(Number(id), data);
+        return await Posts.findOne({ where: { id: Number(id) } });
+    }
+    async BorrarPost(id:any){
+        const postDelete = await User.findOneBy({id:Number(id)})
+        if(!postDelete){
+            throw new Error("Usuario no encontrado");
+        }
+        await postDelete.remove();
+        return postDelete;
+    }
 }

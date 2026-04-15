@@ -3,6 +3,7 @@ import {Request, Response} from 'express'
 import {validate} from 'class-validator'
 import { plainToInstance } from 'class-transformer'
 import {UserProfileDto} from './UserProfile.dto'
+import { UpdateUserProfileDto } from './UpdateUserProfileDto'
 class UserProfileController{
     async ConsultarUsuario(req:Request, res:Response){
         try{
@@ -42,6 +43,22 @@ class UserProfileController{
                 return res.status(400).json({mensaje:'Error en la validación', errors})
             }
             const registro = await service.ActualizarUsuario(id, dto)
+            res.status(200).json(registro)
+        }catch(err){
+            if(err instanceof Error)
+            res.status(400).send(err.message)
+        }
+    }
+    async ActualizarUserProfileParcial(req:Request, res:Response){
+        try{
+            const service = new UserService()
+            const id = req.params.userId
+            const dto = plainToInstance( UpdateUserProfileDto, req.body )
+            const errors = await validate(dto)
+            if(errors.length > 0){
+                return res.status(400).json({mensaje:'Error en la validación', errors})
+            }
+            const registro = await service.ActualizarUserProfileParcial(id, dto)
             res.status(200).json(registro)
         }catch(err){
             if(err instanceof Error)

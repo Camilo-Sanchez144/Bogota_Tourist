@@ -49,6 +49,20 @@ export class UserService{
 
         return registro;
     }
+    async ActualizarUsuarioParcial(id:any, data:any){
+        const registro = await User.findOneBy({id:Number(id)})
+        if(!registro){
+            throw new Error("Usuario no encontrado");
+        }
+        if(registro.status===0){
+            throw new Error("Usuario desactivado");
+        }
+        if (data.password) {
+        data.password = await bcrypt.hash(data.password, 10);
+        }
+        await User.update(Number(id), data);
+        return await User.findOne({ where: { id: Number(id) } });
+    }
     async BorrarUsuario(id:any){
         const user = await User.findOneBy({id:Number(id)})
         if(!user){

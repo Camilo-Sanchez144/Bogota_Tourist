@@ -1,4 +1,4 @@
-import UserProfile from './userProfile.entity'
+import UserProfile from './UserProfile.entity'
 import User from '../User/User.entity'
 class UserProfileService{
     async ConsultarUsuario(id:any){
@@ -53,6 +53,29 @@ class UserProfileService{
             await updateUser.save();
     
             return updateUser;
+    }
+    async ActualizarUserProfileParcial(id: any, data: any) {
+            const updateUser = await UserProfile.findOne({
+                where: { id: Number(id) },
+                loadRelationIds: true
+            })
+            if(!updateUser){
+                throw new Error("Usuario no encontrado");
+            }
+            const validateUser = await User.findOne({
+                where: {id:Number(updateUser.user)}
+            })
+            if(validateUser?.status===0){
+                throw new Error("Usuario desactivado");
+            }
+            if(updateUser.user != data.user){
+                throw new Error("Usuario no coincide el id");
+            }
+            if(!validateUser){
+                throw new Error('No se encontró el usuario')
+            }
+        await UserProfile.update(Number(id), data);
+        return await UserProfile.findOne({ where: { id: Number(id) } });
     }
     async BorrarUsuario(id:any){
         const userDelete = await UserProfile.findOneBy({id:Number(id)})

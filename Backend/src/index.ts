@@ -1,6 +1,6 @@
 import app from './app'
 import { AppDataSource } from './db/conexion';
-
+import "reflect-metadata";
 
 async function main(){
     try{
