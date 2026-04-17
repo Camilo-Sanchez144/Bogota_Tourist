@@ -4,19 +4,22 @@ export class UpdateUserProfileDto{
     
     @IsNotEmpty()
     @IsOptional()
-    bio!:String;
+    @IsString()
+    bio?:string;
 
     @IsOptional()
     @IsNotEmpty()
-    profile_picture!: String;
+    profile_picture?: string;
 
+    @IsOptional()
     @IsNotEmpty()
     @Type(() => Date)
     @IsDate()
-    date_of_birth!:Date
+    date_of_birth?:Date
 
     @IsNotEmpty()
     @IsOptional()
-    user!: Number;
+    @IsNumber()
+    user?: number;
 
 } 

@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne, ManyToOne, JoinColumn} from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn,OneToMany, UpdateDateColumn, OneToOne, ManyToOne, JoinColumn} from "typeorm"
 import User from '../User/User.entity'
+import { Comment } from "../Comments/Comments.entity";
+import { Like } from "../Likes/Likes.entity";
 
 @Entity('posts')
 export class Post extends BaseEntity{
@@ -10,23 +12,26 @@ export class Post extends BaseEntity{
     @ManyToOne(()=>User,(user)=>user.posts)
     @JoinColumn({name:'user_id'})
     user!:User;
+
+    @OneToMany(() => Comment, comment => comment.post)
+    comments!: Comment[];
+    
+    @OneToMany(() => Like, like => like.post)
+    likes!: Like[];
     
     @Column()
     title!: string;
 
-    @Column()
+    @Column('text')
     description!: string;
 
-    @Column()
-    rating!:number;
-
-    @Column()
+    @Column({ default: 0 })
     likes_count!:number;
 
-    @Column()
+    @Column({ default: 0 })
     comments_count!:number;
 
-    @Column()
+    @Column({ nullable: true })
     imageUrl!:string;
     
     @Column({default : true})

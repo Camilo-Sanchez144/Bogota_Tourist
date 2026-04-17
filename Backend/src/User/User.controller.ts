@@ -71,7 +71,7 @@ class UserController{
             if(errors.length > 0){
                 return res.status(400).json({mensaje:'Error en la validación', errors})
             }
-            const registro = await service.ActualizarUsuario(id, dto)
+            const registro = await service.ActualizarUsuarioParcial(id, dto)
             res.status(200).json(registro)
         }catch(err){
             if(err instanceof Error)

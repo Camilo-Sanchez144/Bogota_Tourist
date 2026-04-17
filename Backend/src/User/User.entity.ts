@@ -1,6 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany} from "typeorm"
 import UserProfile from '../UserProfile/UserProfile.entity'
 import Post from '../Posts/Post.entity'
+import { Comment } from "../Comments/Comments.entity";
+import { Like } from "../Likes/Likes.entity";
+
 @Entity('users')
 export class User extends BaseEntity{
 
@@ -16,13 +19,19 @@ export class User extends BaseEntity{
     @Column()
     password!:string;
 
+    @OneToMany(() => Comment, comment => comment.user)
+    comments!: Comment[];
+    
+    @OneToMany(() => Like, like => like.user)
+    likes!: Like[];
+
     @Column()
     first_name!:string;
 
     @Column()
     last_name!:string;
 
-    @Column()
+    @Column({ type: 'bigint' })
     cellphone!:number;
 
     @OneToOne(() => UserProfile, (profile) => profile.user, {
