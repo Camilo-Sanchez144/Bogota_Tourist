@@ -1,6 +1,6 @@
 import User from '../User/User.entity'
 import Posts from './Post.entity'
-export class Post{
+export class PostService{
     async ConsultarPosts(){
         const posts = await Posts.find({relations:{user:true}})
         return posts;

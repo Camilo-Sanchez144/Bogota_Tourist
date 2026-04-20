@@ -9,7 +9,7 @@ export class Post extends BaseEntity{
     @PrimaryGeneratedColumn()
     id!:number;
 
-    @ManyToOne(()=>User,(user)=>user.posts)
+    @ManyToOne(()=>User,(user)=>user.posts, { onDelete: 'CASCADE' })
     @JoinColumn({name:'user_id'})
     user!:User;
 

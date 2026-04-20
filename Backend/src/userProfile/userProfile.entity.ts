@@ -4,18 +4,18 @@ import User from '../User/User.entity'
 @Entity('user_profile')
 class UserProfile extends BaseEntity{
     @PrimaryGeneratedColumn()
-    id!:Number;
+    id!:number;
 
    @Column({type: 'text'})
-    bio!:String;
+    bio!:string;
 
     @Column()
-    profile_picture!: String;
+    profile_picture!: string;
 
     @Column()
     date_of_birth!:Date
 
-    @OneToOne(() => User, (user) => user.profile)
+    @OneToOne(() => User, (user) => user.profile, { onDelete: 'CASCADE' })
     @JoinColumn({name:'user_id'})  
     user!: User;
 

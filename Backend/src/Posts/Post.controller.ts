@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Post } from './Post.service';
+import { PostService } from './Post.service';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { PostDto } from './Post.dto';
@@ -8,7 +8,7 @@ import { UpdatePostDto } from './UpdatePost.dto';
 class PostController{
     async ConsultarPosts(req: Request, res: Response){
         try{
-            const postService = new Post();
+            const postService = new PostService();
             const consultaPosts = await postService.ConsultarPosts()
             res.status(200).send(consultaPosts)
         }catch(err){
@@ -20,7 +20,7 @@ class PostController{
     async ConsultarPostDetalle(req: Request, res: Response){
         try{
             const id = req.params.id
-            const postService = new Post()
+            const postService = new PostService()
             const consultaPost = await postService.ConsultarPostId(id)
             res.status(200).send(consultaPost)
         }catch(err){
@@ -32,7 +32,7 @@ class PostController{
     async ConsultarPostPorUsuario(req: Request, res: Response){
         try{
             const id = req.params.id
-            const postService = new Post()
+            const postService = new PostService()
             const consultaPost = await postService.ConsultarPostPorUsuario(id)
             res.status(200).send(consultaPost)
         }catch(err){
@@ -52,7 +52,7 @@ class PostController{
                 res.status(400).send('user debe ser un numero')
                 return;
             }
-            const postService = new Post();
+            const postService = new PostService();
             const dto = plainToInstance(PostDto, req.body)
             const errors =await validate(dto)
             if(errors.length > 0){
@@ -70,7 +70,7 @@ class PostController{
     };
     async ActualizarPost(req: Request, res: Response){
         try{
-            const postService = new Post();
+            const postService = new PostService();
             const id = req.params.id
             const dto = plainToInstance(PostDto, req.body)
             const errors =await validate(dto)
@@ -88,7 +88,7 @@ class PostController{
     }
     async ActualizarPostParcial(req: Request, res: Response) {
         try {
-            const postService = new Post();
+            const postService = new PostService();
             const id = req.params.id;
 
             const dto = plainToInstance(UpdatePostDto, req.body);
@@ -112,7 +112,7 @@ class PostController{
     async BorrarPost(req: Request, res: Response){
         try{
             const id = req.params.id
-            const postService = new Post();
+            const postService = new PostService();
             await postService.BorrarPost(id);
             return res.status(204).send()
         }catch (err) {

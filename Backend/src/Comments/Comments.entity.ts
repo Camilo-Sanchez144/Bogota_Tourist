@@ -1,10 +1,10 @@
-import { Entity,PrimaryGeneratedColumn,Column,ManyToOne,OneToMany,CreateDateColumn,UpdateDateColumn,JoinColumn } from 'typeorm';
+import { Entity,PrimaryGeneratedColumn,Column,ManyToOne,OneToMany,CreateDateColumn,UpdateDateColumn,JoinColumn, BaseEntity } from 'typeorm';
 
 import { User } from '../User/User.entity';
 import { Post } from '../Posts/Post.entity';
 
 @Entity('comments')
-export class Comment {
+export class Comment extends BaseEntity{
 
   @PrimaryGeneratedColumn()
   id!: number;
@@ -19,7 +19,7 @@ export class Comment {
 
   @ManyToOne(() => Comment, comment => comment.replies, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'parent_id' })
-  parent!: Comment;
+  parent!: Comment | null;
 
   @OneToMany(() => Comment, comment => comment.parent)
   replies!: Comment[];

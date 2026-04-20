@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany} from "typeorm"
-import UserProfile from '../UserProfile/UserProfile.entity'
+import UserProfile from '../UserProfile/userProfile.entity'
 import Post from '../Posts/Post.entity'
 import { Comment } from "../Comments/Comments.entity";
 import { Like } from "../Likes/Likes.entity";

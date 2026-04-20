@@ -1,4 +1,4 @@
-import UserProfile from './UserProfile.entity'
+import UserProfile from './userProfile.entity'
 import User from '../User/User.entity'
 class UserProfileService{
     async ConsultarUsuario(id:any){
@@ -9,7 +9,7 @@ class UserProfileService{
         return userFind
     }
     async AgregarUsuario(data:any, id:any){
-        const saveUser = await new UserProfile()
+        const saveUser = new UserProfile()
         const user = await User.findOne({where:{id:Number(data.user)}})
         if(user?.status==0){
             throw new Error("Usuario desactivado");
