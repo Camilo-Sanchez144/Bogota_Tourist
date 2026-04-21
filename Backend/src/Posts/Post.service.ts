@@ -1,57 +1,93 @@
 import User from '../User/User.entity'
 import Posts from './Post.entity'
 export class PostService{
-    async ConsultarPosts(){
-        const posts = await Posts.find({relations:{user:true}})
+    async getPosts(){
+        const posts = await Posts.find({where: {is_active:true}, relations:{user:true}})
         return posts;
     }
-    async ConsultarPostId(id:any){
-        const postById = await Posts.findOne({where: {id:Number(id)}, relations:{user:true}})
-        if(!postById){
+    async getPostById(postId:number){
+        const postById = await Posts.findOne({where: {id:Number(postId)}, relations:{user:true}})
+        if(!postById || !postById.is_active){
             throw new Error('El post no existe')
         }
         return postById;
     }
-    async ConsultarPostPorUsuario(id:any){
-        const postByUser = await Posts.find({where: {user:{id: id}}})
+    async getPostByUser(userId:number){
+        const user = await User.findOne({ where: { id: userId } })
+        if (!user || user.status === 0 ) {
+            throw new Error('Usuario no existe o está desactivado')
+        }
+        const postByUser = await Posts.find({where: { user: { id: userId }, is_active: true }})
         return postByUser;
     }
-    async CrearPost(data:any){
-        const crearPost = new Posts()
+    async createPost(userId:number, data:any){
+        const user = await User.findOne({ where: { id: userId } })
+        if(user?.status == 0 || !user){
+            throw new Error ('Usuario desactivado o no existe')
+        }
+        const createPost = new Posts()
         
-        crearPost.title = data.title;
-        crearPost.description = data.description;
-        crearPost.user = data.user;
-        crearPost.imageUrl = data.imageUrl;
+        createPost.title = data.title;
+        createPost.description = data.description;
+        createPost.user = user
+        createPost.imageUrl = data.imageUrl;
 
-        await crearPost.save();
+        await createPost.save();
         
-        return crearPost;
+        return createPost;
     }
-    async ActualizarPost(id:any, data:any){
-        const post = await Posts.findOneBy({id:Number(id)})
+    async updatePost(userId:number, data: {title: string , description: string, imageUrl?: string}, postId: number){
+        const post = await Posts.findOne({where:{id:postId},  relations: ['user']})
         if(!post){
             throw new Error("Post no encontrado");
         }
+        if (post?.user?.id !== userId) {
+            throw new Error('No autorizado')
+        }
+        if (post?.user.status === 0){
+            throw new Error ("Usuario desactivado")
+        }
+        if (!data.title || data.title.trim() === '') {
+            throw new Error('Título requerido')
+        }
+        if (!data.description || data.description.trim() === '') {
+            throw new Error('Descripción requerida')
+        }
         post.title = data.title;
         post.description = data.description;
-        post.user = data.user;
-        post.imageUrl = data.imageUrl;
+        post.imageUrl = data.imageUrl ?? post.imageUrl
 
         await post.save()
         
         return post;
     }
-    async ActualizarPostParcial(id: any, data: any) {
-        await Posts.update(Number(id), data);
-        return await Posts.findOne({ where: { id: Number(id) } });
-    }
-    async BorrarPost(id:any){
-        const postDelete = await User.findOneBy({id:Number(id)})
-        if(!postDelete){
-            throw new Error("Usuario no encontrado");
+    async patchUser(postId: number, userId:number, data: any) {
+        const post = await Posts.findOne({where:{id:postId},  relations: ['user']})
+        if(!post || !post.is_active){
+            throw new Error('El Post no existe o está desactivado')
         }
-        await postDelete.remove();
-        return postDelete;
+        if (post?.user?.id !== userId) {
+            throw new Error('No autorizado')
+        }
+        if (post?.user.status === 0){
+            throw new Error ("Usuario desactivado")
+        }
+        post.title = data.title ?? post.title;
+        post.description = data.description ?? post.description;
+        post.imageUrl = data.imageUrl ?? post.imageUrl
+        await post.save()
+        return await Posts.findOne({ where: { id: Number(postId) } });
+    }
+    async deletePost(postId:number, userId:number){
+        const postDelete = await Posts.findOneBy({ id: Number(postId) })
+        if(!postDelete){
+            throw new Error("Post no encontrado");
+        }
+        if (postDelete.user?.id !== userId) {
+            throw new Error('No autorizado')
+        }
+        postDelete.is_active = false
+        await postDelete.save()
+        return postDelete
     }
 }

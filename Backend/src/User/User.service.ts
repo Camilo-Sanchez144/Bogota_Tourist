@@ -1,20 +1,24 @@
 import { User } from './User.entity'
 import bcrypt from 'bcrypt';
 export class UserService{
-    async ConsultarUsuarios(){
-        const consultar = await User.find({where:{status:1}})
-        return consultar
+    async getUsers(){
+        const getUsers = await User.find({where:{status:1}})
+        return getUsers
     }
-    async ConsultarUsuarioDetalle(id:any){
-        const userId = await User.findOneBy({id:Number(id)})
-        if(!userId){
-            throw new Error('Usuario no encontrado')
+    async getUserById(userId:number){
+        const user = await User.findOneBy({id:(userId)})
+        if(!user || user.status === 0){
+            throw new Error('Usuario no encontrado o desactivado')
         }
-        return userId
+        return user
     }
-    async AgregarUsuario(data:any){
+    async createUser(data:any){
         const hashedPassword = await bcrypt.hash(data.password, 10)
+        const existingUser = await User.findOne({ where: { email: data.email } })
 
+        if (existingUser) {
+        throw new Error('Email ya registrado')
+        }
         const createUser = new User();
         createUser.username = data.username;
         createUser.first_name = data.first_name
@@ -25,46 +29,56 @@ export class UserService{
         createUser.status = 1
 
         await createUser.save()
-
         return createUser
 
     }
-    async ActualizarUsuario(id:any, data:any){
+    async updateUser(userId:number, data:any){
         const hashedPassword = await bcrypt.hash(data.password, 10)
-        const registro = await User.findOneBy({id:Number(id)})
-        if(!registro){
+        const register = await User.findOneBy({id:(userId)})
+        if(!register){
             throw new Error("Usuario no encontrado");
         }
-        if(registro.status===0){
+        if(register.status===0){
             throw new Error("Usuario desactivado");
         }
-        registro.username = data.username;
-        registro.first_name= data.first_name;
-        registro.last_name = data.last_name;
-        registro.email = data.email;
-        registro.cellphone = data.cellphone;
-        registro.password = hashedPassword;
+        register.username = data.username;
+        register.first_name= data.first_name;
+        register.last_name = data.last_name;
+        register.email = data.email;
+        register.cellphone = data.cellphone;
+        register.password = hashedPassword;
 
-        await registro.save();
+        await register.save();
 
-        return registro;
+        return register;
     }
-    async ActualizarUsuarioParcial(id:any, data:any){
-        const registro = await User.findOneBy({id:Number(id)})
-        if(!registro){
-            throw new Error("Usuario no encontrado");
+    async patchUser(userId:number, data:any){
+        const register = await User.findOneBy({ id: userId })
+
+        if (!register) {
+            throw new Error("Usuario no encontrado")
         }
-        if(registro.status===0){
-            throw new Error("Usuario desactivado");
+        if (register.status === 0) {
+            throw new Error("Usuario desactivado")
         }
+        register.username = data.username ?? register.username 
+        register.first_name = data.first_name ?? register.first_name
+        register.last_name = data.last_name ?? register.last_name
+        register.email = data.email ?? register.email
+        register.cellphone = data.cellphone ?? register.cellphone
+
         if (data.password) {
-        data.password = await bcrypt.hash(data.password, 10);
+            register.password = await bcrypt.hash(data.password, 10)
         }
-        await User.update(Number(id), data);
-        return await User.findOne({ where: { id: Number(id) } });
+
+        await register.save()
+
+        const { password, ...safeUser } = register
+
+        return safeUser
     }
-    async BorrarUsuario(id:any){
-        const user = await User.findOneBy({id:Number(id)})
+    async deleteUser(userId:number){
+        const user = await User.findOneBy({id:(userId)})
         if(!user){
             throw new Error("Usuario no encontrado");
         }

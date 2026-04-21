@@ -6,60 +6,57 @@ import { PostDto } from './Post.dto';
 import { UpdatePostDto } from './UpdatePost.dto';
 
 class PostController{
-    async ConsultarPosts(req: Request, res: Response){
+    private postService = new PostService();
+    async getPosts(req: Request, res: Response){
         try{
-            const postService = new PostService();
-            const consultaPosts = await postService.ConsultarPosts()
-            res.status(200).send(consultaPosts)
+            const getPosts = await this.postService.getPosts()
+            res.status(200).send(getPosts)
         }catch(err){
             if(err instanceof Error){
             res.status(500).send(err.message);
             }
         }
     }
-    async ConsultarPostDetalle(req: Request, res: Response){
+    async getPostById(req: Request, res: Response){
         try{
-            const id = req.params.id
-            const postService = new PostService()
-            const consultaPost = await postService.ConsultarPostId(id)
-            res.status(200).send(consultaPost)
+            const postId = Number(req.params.postId)
+            const getPosts = await this.postService.getPostById(postId)
+            res.status(200).send(getPosts)
         }catch(err){
             if(err instanceof Error){
             res.status(500).send(err.message);
             }
         }
     }
-    async ConsultarPostPorUsuario(req: Request, res: Response){
+    async getPostByUser(req: Request, res: Response){
         try{
-            const id = req.params.id
-            const postService = new PostService()
-            const consultaPost = await postService.ConsultarPostPorUsuario(id)
-            res.status(200).send(consultaPost)
+            const userId = Number(req.params.userId)
+            const getPosts = await this.postService.getPostByUser(userId)
+            res.status(200).send(getPosts)
         }catch(err){
             if(err instanceof Error){
             res.status(500).send(err.message);
             }
         }
     }
-    async crearPost(req: Request, res: Response){
+    async createPost(req: Request, res: Response){
         try {
+            const userId = Number(req.params.userId)
             if (!req.file) {
                 res.status(400).json({ message: 'La imagen es obligatoria' });
                 return;
             }
-            const {user} = req.body
-            if(isNaN(user)){
+            if(isNaN(userId)){
                 res.status(400).send('user debe ser un numero')
                 return;
             }
-            const postService = new PostService();
             const dto = plainToInstance(PostDto, req.body)
             const errors =await validate(dto)
             if(errors.length > 0){
                 return res.status(400).json({mensaje:'Error en la validación', errors})
             }
             const imageUrl = (req.file as any)?.secure_url ?? req.file?.path;
-            const newPost = await postService.CrearPost({ ...dto,imageUrl});
+            const newPost = await this.postService.createPost(userId,{ ...dto,imageUrl});
             res.json(newPost);
 
         } catch(err){
@@ -68,17 +65,17 @@ class PostController{
             }
         }
     };
-    async ActualizarPost(req: Request, res: Response){
+    async updatePost(req: Request, res: Response){
         try{
-            const postService = new PostService();
-            const id = req.params.id
+            const userId = Number(req.params.userId)
+            const postId = Number(req.params.postId)
             const dto = plainToInstance(PostDto, req.body)
             const errors =await validate(dto)
             if(errors.length > 0){
                 return res.status(400).json({mensaje:'Error en la validación', errors})
             }
             const imageUrl = (req.file as any)?.secure_url ?? req.file?.path;
-            const newPost = await postService.ActualizarPost(id,{ ...dto,imageUrl});
+            const newPost = await this.postService.updatePost(userId,{ ...dto,imageUrl}, postId);
             res.json(newPost);
         }catch(err){
             if(err instanceof Error){
@@ -86,10 +83,10 @@ class PostController{
             }
         }
     }
-    async ActualizarPostParcial(req: Request, res: Response) {
+    async patchPost(req: Request, res: Response) {
         try {
-            const postService = new PostService();
-            const id = req.params.id;
+            const userId = Number(req.params.userId)
+            const postId = Number(req.params.postId)
 
             const dto = plainToInstance(UpdatePostDto, req.body);
             const errors = await validate(dto);
@@ -100,7 +97,7 @@ class PostController{
             const imageUrl = (req.file as any)?.secure_url ?? req.file?.path;
             const data = { ...dto, ...(imageUrl && { imageUrl }) };
 
-            const updatedPost = await postService.ActualizarPostParcial(id, data);
+            const updatedPost = await this.postService.patchUser(postId, userId, data);
             res.json(updatedPost);
 
         } catch (err) {
@@ -109,11 +106,11 @@ class PostController{
             }
         }
     }
-    async BorrarPost(req: Request, res: Response){
+    async deletePost(req: Request, res: Response){
         try{
-            const id = req.params.id
-            const postService = new PostService();
-            await postService.BorrarPost(id);
+            const userId = Number(req.params.userId)
+            const postId = Number(req.params.postId)
+            await this.postService.deletePost(postId, userId);
             return res.status(204).send()
         }catch (err) {
             if (err instanceof Error) {
