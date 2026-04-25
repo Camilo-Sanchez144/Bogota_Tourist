@@ -10,9 +10,4 @@ export class UpdatePostDto {
     @IsNotEmpty()
     @IsString()
     description?: string;
-
-    @IsOptional()
-    @IsNotEmpty()
-    @IsNumber()
-    user!:number;
 }

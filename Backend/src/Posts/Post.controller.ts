@@ -7,7 +7,7 @@ import { UpdatePostDto } from './UpdatePost.dto';
 
 class PostController{
     private postService = new PostService();
-    async getPosts(req: Request, res: Response){
+    getPosts = async (req: Request, res: Response) => {
         try{
             const getPosts = await this.postService.getPosts()
             res.status(200).send(getPosts)
@@ -17,7 +17,7 @@ class PostController{
             }
         }
     }
-    async getPostById(req: Request, res: Response){
+    getPostById = async (req: Request, res: Response) => {
         try{
             const postId = Number(req.params.postId)
             const getPosts = await this.postService.getPostById(postId)
@@ -28,7 +28,7 @@ class PostController{
             }
         }
     }
-    async getPostByUser(req: Request, res: Response){
+    getPostByUser = async (req: Request, res: Response)=>{
         try{
             const userId = Number(req.params.userId)
             const getPosts = await this.postService.getPostByUser(userId)
@@ -39,7 +39,7 @@ class PostController{
             }
         }
     }
-    async createPost(req: Request, res: Response){
+    createPost = async (req: Request, res: Response)=>{
         try {
             const userId = Number(req.params.userId)
             if (!req.file) {
@@ -65,7 +65,7 @@ class PostController{
             }
         }
     };
-    async updatePost(req: Request, res: Response){
+    updatePost = async (req: Request, res: Response)=>{
         try{
             const userId = Number(req.params.userId)
             const postId = Number(req.params.postId)
@@ -83,7 +83,7 @@ class PostController{
             }
         }
     }
-    async patchPost(req: Request, res: Response) {
+    patchPost = async (req: Request, res: Response) => {
         try {
             const userId = Number(req.params.userId)
             const postId = Number(req.params.postId)
@@ -106,7 +106,7 @@ class PostController{
             }
         }
     }
-    async deletePost(req: Request, res: Response){
+    deletePost = async (req: Request, res: Response)=>{
         try{
             const userId = Number(req.params.userId)
             const postId = Number(req.params.postId)

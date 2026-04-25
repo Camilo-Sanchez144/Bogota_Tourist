@@ -1,11 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, JoinColumn, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, JoinColumn, Unique, BaseEntity } from 'typeorm';
 
 import { User } from '../User/User.entity';
 import { Post } from '../Posts/Post.entity';
 
 @Entity('likes')
 @Unique(['user', 'post'])
-export class Like {
+export class Like extends BaseEntity{
 
   @PrimaryGeneratedColumn()
   id!: number;

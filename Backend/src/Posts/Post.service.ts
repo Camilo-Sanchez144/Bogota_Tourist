@@ -6,7 +6,7 @@ export class PostService{
         return posts;
     }
     async getPostById(postId:number){
-        const postById = await Posts.findOne({where: {id:Number(postId)}, relations:{user:true}})
+        const postById = await Posts.findOne({where: {id:(postId)}, relations:{user:true}})
         if(!postById || !postById.is_active){
             throw new Error('El post no existe')
         }
@@ -56,6 +56,7 @@ export class PostService{
         post.title = data.title;
         post.description = data.description;
         post.imageUrl = data.imageUrl ?? post.imageUrl
+        post.user = post.user
 
         await post.save()
         

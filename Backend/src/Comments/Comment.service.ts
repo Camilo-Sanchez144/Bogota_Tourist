@@ -1,14 +1,18 @@
 import { Comment } from "./Comments.entity" 
 import { Post } from '../Posts/Post.entity'
 import { User } from '../User/User.entity'
+import { IsNull } from 'typeorm';
 export class CommentService{    
     async getCommentsByPost(postId: number) {
         const comments = await Comment.find({
-            where: { post: { id: postId }, 
-            is_active: true },
-            relations: ['user', 'replies'],
+            where: {
+                post: { id: postId },
+                is_active: true,
+                parent: IsNull()
+            },
+            relations: ['user', 'replies', 'replies.user'],
             order: { created_at: 'DESC' }
-        });
+        })
         return comments;
     }
     async createComment(userId:number, postId:number, data:{ content: string }, parentId?:number){
@@ -65,7 +69,7 @@ export class CommentService{
         return userComment
     }
     async DeleteComment(commentId:number, userId:number){
-        const comment = await Comment.findOne({where: {id:(commentId),   user: { id: userId }, is_active: true}})
+        const comment = await Comment.findOne({where: {id:(commentId),  user: { id: userId }, is_active: true}, relations: ['post']})
         if(!comment){
             throw new Error('Comentario no disponible o no existe')
         }
