@@ -6,23 +6,23 @@ export class PostService{
         return posts;
     }
     async getPostById(postId:number){
-        const postById = await Posts.findOne({where: {id:(postId)}, relations:{user:true}})
-        if(!postById || !postById.is_active){
+        const postById = await Posts.findOne({where: {id:(postId), is_active:true}, relations:{user:true}})
+        if(!postById){
             throw new Error('El post no existe')
         }
         return postById;
     }
     async getPostByUser(userId:number){
-        const user = await User.findOne({ where: { id: userId } })
-        if (!user || user.status === 0 ) {
+        const user = await User.findOne({ where: { id: userId, status:1 } })
+        if (!user ) {
             throw new Error('Usuario no existe o está desactivado')
         }
         const postByUser = await Posts.find({where: { user: { id: userId }, is_active: true }})
         return postByUser;
     }
     async createPost(userId:number, data:any){
-        const user = await User.findOne({ where: { id: userId } })
-        if(user?.status == 0 || !user){
+        const user = await User.findOne({ where: { id: userId, status: 1 } })
+        if(!user){
             throw new Error ('Usuario desactivado o no existe')
         }
         const createPost = new Posts()
@@ -37,7 +37,7 @@ export class PostService{
         return createPost;
     }
     async updatePost(userId:number, data: {title: string , description: string, imageUrl?: string}, postId: number){
-        const post = await Posts.findOne({where:{id:postId},  relations: ['user']})
+        const post = await Posts.findOne({where:{id:postId, is_active:true},  relations: ['user']})
         if(!post){
             throw new Error("Post no encontrado");
         }
@@ -63,8 +63,8 @@ export class PostService{
         return post;
     }
     async patchUser(postId: number, userId:number, data: any) {
-        const post = await Posts.findOne({where:{id:postId},  relations: ['user']})
-        if(!post || !post.is_active){
+        const post = await Posts.findOne({where:{id:postId, is_active:true},  relations: ['user']})
+        if(!post){
             throw new Error('El Post no existe o está desactivado')
         }
         if (post?.user?.id !== userId) {
@@ -77,10 +77,10 @@ export class PostService{
         post.description = data.description ?? post.description;
         post.imageUrl = data.imageUrl ?? post.imageUrl
         await post.save()
-        return await Posts.findOne({ where: { id: Number(postId) } });
+        return await Posts.findOne({ where: { id: postId } });
     }
     async deletePost(postId:number, userId:number){
-        const postDelete = await Posts.findOneBy({ id: Number(postId) })
+        const postDelete = await Posts.findOneBy({ id:postId, is_active:true  })
         if(!postDelete){
             throw new Error("Post no encontrado");
         }

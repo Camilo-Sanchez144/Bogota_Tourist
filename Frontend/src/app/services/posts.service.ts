@@ -15,15 +15,18 @@ export class PostsService {
 
   private authHeaders(): HttpHeaders {
     const token = localStorage.getItem('access');
+    console.log("token")
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
   getPosts(): Observable<Post[]> {
+    console.log("Se invocó el metodo")
     return this.http.get<Post[]>(this.postsUrl);
   }
 
   getPost(id: number): Observable<Post> {
-    return this.http.get<Post>(`${this.postsUrl}${id}/`);
+    console.log("Se invocó el metodo")
+    return this.http.get<Post>(`${this.postsUrl}${id}`);
   }
 
   createPost(post: Partial<Post>): Observable<Post> {

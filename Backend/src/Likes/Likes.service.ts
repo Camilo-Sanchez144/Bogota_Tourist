@@ -6,15 +6,15 @@ export class LikeService {
 
     async toggleLike(userId: number, postId: number) {
 
-        const user = await User.findOne({ where: { id: userId } })
+        const user = await User.findOne({ where: { id: userId, status:1 } })
         if (!user) {
             throw new Error('Usuario no existe')
         }
-        const post = await Post.findOne({ where: { id: postId } })
+        const post = await Post.findOne({ where: { id: postId, is_active:true } })
         if (!post) {
             throw new Error('Post no existe')
         }
-        const existingLike = await Like.findOne({where: {user: { id: userId },post: { id: postId }}})
+        const existingLike = await Like.findOne({where: {user: { id: userId, status:1 },post: { id: postId, is_active:true }}})
         if (existingLike) {
             await existingLike.remove()
             post.likes_count = Math.max(0, post.likes_count - 1)

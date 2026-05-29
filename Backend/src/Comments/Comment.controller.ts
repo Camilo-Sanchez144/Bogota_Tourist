@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { CommentService } from './Comment.service';
 class CommentController{
     private commentService = new CommentService()
+    
     getCommentsByPost = async (req:Request,res:Response)=>{
         try{
             const postId = Number(req.params.postId)
@@ -19,9 +20,12 @@ class CommentController{
     createComment = async (req:Request,res:Response)=>{
         try{
             const postId = Number(req.params.postId)
-            const userId = Number(req.params.userId)
-            if (isNaN(postId) || isNaN(userId)) {
-                return res.status(400).send('IDs inválidos')
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
+            if (isNaN(postId)) {
+                return res.status(400).send('ID inválidos')
             }
             const { content, parentId } = req.body;
             if (!content || content.trim() === '') {
@@ -40,10 +44,13 @@ class CommentController{
     }
     editComment = async (req:Request,res:Response)=>{
         try{
-            const userId = Number(req.params.userId)
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
             const commentId = Number(req.params.commentId)
-            if (isNaN(userId) || isNaN(commentId)) {
-                return res.status(400).send('IDs inválidos')
+            if (isNaN(commentId)) {
+                return res.status(400).send('ID inválidos')
             }
             const { content } = req.body;
             if (!content || content.trim() === '') {
@@ -62,9 +69,12 @@ class CommentController{
     }
     deleteComment = async (req:Request,res:Response)=>{
         try{
-            const userId = Number(req.params.userId)
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
             const commentId = Number(req.params.commentId)
-            if (isNaN(userId) || isNaN(commentId)) {
+            if (isNaN(commentId)) {
                 return res.status(400).send('IDs inválidos')
             }
             const commentDeleted = await this.commentService.DeleteComment(commentId,userId)

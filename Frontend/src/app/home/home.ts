@@ -1,32 +1,37 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SlicePipe } from '@angular/common';
+import { CommonModule, SlicePipe } from '@angular/common';
 import { ExperiencesService } from '../services/experiences.service';
 import { Post } from '../interfaces/Post';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, SlicePipe],
+  standalone: true,
+  imports: [CommonModule, RouterLink, SlicePipe],
   templateUrl: './home.html',
-  styleUrl: './home.css',
+  styleUrls: ['./home.css']
 })
 export class Home implements OnInit {
   private experiencesService = inject(ExperiencesService);
   posts: Post[] = [];
 
+  private cdr = inject(ChangeDetectorRef);
+
   ngOnInit(): void {
     this.loadPosts();
   }
 
-  loadPosts() {
-    this.experiencesService.getPosts().subscribe({
-      next: (data) => {
-        // Show only the first 3 posts
-        this.posts = data.slice(0, 3);
-      },
-      error: (err) => console.error('Error loading posts', err)
-    });
-  }
+loadPosts() {
+  this.experiencesService.getPosts().subscribe({
+    next: (data) => {
+      this.posts = data.slice(0, 3);
+
+      this.cdr.detectChanges();
+    },
+    error: (err) => console.error('Error loading posts', err)
+  });
+}
 
   categorias = ['Todos', 'Salud', 'Hospedaje', 'Transporte', 'Exploración'];
   categoriaSeleccionada = 'Todos';

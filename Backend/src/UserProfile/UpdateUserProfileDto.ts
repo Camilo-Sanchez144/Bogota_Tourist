@@ -9,17 +9,8 @@ export class UpdateUserProfileDto{
 
     @IsOptional()
     @IsNotEmpty()
-    profile_picture?: string;
-
-    @IsOptional()
-    @IsNotEmpty()
     @Type(() => Date)
     @IsDate()
     date_of_birth?:Date
-
-    @IsNotEmpty()
-    @IsOptional()
-    @IsNumber()
-    user?: number;
 
 } 

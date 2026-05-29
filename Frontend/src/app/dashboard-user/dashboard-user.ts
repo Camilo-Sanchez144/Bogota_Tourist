@@ -3,10 +3,10 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, 
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Acceso } from '../services/acceso';
-import { TripsService } from '../services/trips.service';
+//import { TripsService } from '../services/event.service';
 import { ExperiencesService } from '../services/experiences.service';
 import { LocationsService } from '../services/locations.service';
-import { Trip } from '../interfaces/Trip';
+//import { Trip } from '../interfaces/Trip';
 import { Post } from '../interfaces/Post';
 import { Place } from '../interfaces/Place';
 import { appsettings } from '../settings/appsettings';
@@ -20,13 +20,13 @@ import { emailValidator, phoneValidator } from '../validators/custom-validators'
 })
 export class DashboardUser implements OnInit {
   private accesoService = inject(Acceso);
-  private tripsService = inject(TripsService);
+  //private tripsService = inject(TripsService);
   private experiencesService = inject(ExperiencesService);
   private locationsService = inject(LocationsService);
   private fb = inject(FormBuilder);
   
   user = JSON.parse(localStorage.getItem("user") || '{}');
-  trips: Trip[] = [];
+  //trips: Trip[] = [];
   posts: Post[] = [];
   reviews: any[] = [];
   placesList: Place[] = [];
@@ -90,7 +90,7 @@ export class DashboardUser implements OnInit {
   }
 
   loadTrips() {
-    console.log('Iniciando carga de viajes...');
+   /*  console.log('Iniciando carga de viajes...');
     this.tripsService.getTrips().subscribe({
       next: (trips) => {
         console.log('Viajes cargados desde el backend:', trips);
@@ -98,7 +98,7 @@ export class DashboardUser implements OnInit {
         console.log('Variable trips actualizada:', this.trips);
       },
       error: (err) => console.error('Error cargando viajes:', err)
-    });
+    }); */
   }
 
   loadPosts() {
@@ -112,13 +112,13 @@ export class DashboardUser implements OnInit {
     }
   }
 
-  get activeTripsCount(): number {
+/*   get activeTripsCount(): number {
     return this.trips.filter(t => t.is_active).length;
   }
 
   get completedTripsCount(): number {
     return this.trips.filter(t => !t.is_active).length;
-  }
+  } */
 
   email = this.user.email;
   cellphone = this.user.cellphone;
@@ -160,7 +160,7 @@ export class DashboardUser implements OnInit {
     is_active: [true]
   });
 
-  openTripModal(trip: Trip) {
+  /* openTripModal(trip: Trip) {
     this.selectedTripId = trip.id || null;
     
     // Parse description to extract categories and places
@@ -196,7 +196,7 @@ export class DashboardUser implements OnInit {
       is_active: trip.is_active
     });
     this.tripFormVisible = true;
-  }
+  } */
 
   closeTripModal() {
     this.tripFormVisible = false;
@@ -214,7 +214,7 @@ export class DashboardUser implements OnInit {
     this.tripForm.patchValue({ description: newDescription });
 
     const updatedData = this.tripForm.value;
-    this.tripsService.updateTrip(this.selectedTripId, updatedData).subscribe({
+    /* this.tripsService.updateTrip(this.selectedTripId, updatedData).subscribe({
       next: (res) => {
         console.log('Trip updated:', res);
         this.loadTrips(); // Refresh list
@@ -224,7 +224,7 @@ export class DashboardUser implements OnInit {
         setTimeout(() => this.showSuccess = false, 3000);
       },
       error: (err) => console.error('Error updating trip', err)
-    });
+    }); */
   }
 
   private passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
@@ -315,7 +315,7 @@ export class DashboardUser implements OnInit {
         this.email = userActualizado.email;
         this.cellphone = userActualizado.cellphone;
         this.bio = userActualizado.bio || '';
-        this.previewUrl = this.resolvePhoto(userActualizado.profile_picture) || this.previewUrl;
+       // this.previewUrl = this.resolvePhoto(userActualizado.profile_picture) || this.previewUrl;
         this.previewUrlTemp = null;
         this.profile_picture = null;
         this.profileForm.patchValue({
@@ -371,9 +371,7 @@ export class DashboardUser implements OnInit {
     this.selectedPostId = post.id || null;
     this.postForm.patchValue({
       title: post.title,
-      description: post.description,
-      rating: post.rating,
-      location: post.location || 1
+      description: post.description
     });
     this.postFormVisible = true;
   }

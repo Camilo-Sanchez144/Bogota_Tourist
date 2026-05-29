@@ -16,4 +16,5 @@ export class Place extends BaseEntity {
 
     @Column({ nullable: true })
     category?: string
+    
 }

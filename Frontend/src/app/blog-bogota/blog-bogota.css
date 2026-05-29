@@ -87,7 +87,6 @@
   display: flex;
 }
 
-/* Contenido del formulario */
 .modal-content {
   background: white;
   padding: 25px;
@@ -123,4 +122,451 @@
 .btn-enviar{
   background-color: #0052a6;
   color: #ffffff;
+}
+
+.modalPost {
+  position: fixed;     
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+  z-index: 9999;  
+}
+.modalPost h2{
+  font-family: 'Times New Roman', Times, serif;
+}
+.modalPost hr{
+  border: none;
+  border-top: 1px solid #000000;
+  width: 90%;
+}
+.modalPost.active {
+  opacity: 1;
+  pointer-events: auto;
+  display: flex;
+}
+
+.modal-contentPost {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90%;
+  overflow-y: auto;
+}
+.modal-contentPost label{
+  display: block;
+  margin-top: 2%;
+}
+.modal-contentPost input{
+  display: block;
+  margin-top: 5px;
+  border-radius: 6px;
+  width: 100%;
+  height: 30px;
+}
+.modal-contentPost textarea{
+  border-radius: 6px;
+  width: 100%;
+}
+
+/* === OVERLAY === */
+.modalPost {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modalPost.active {
+  display: flex;
+}
+
+/* === CONTENEDOR === */
+.modal-contentPost {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 90vw;
+  max-width: 1000px;
+  height: 85vh;           /* ← altura fija para todo el modal */
+  max-height: 85vh;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.3);
+  animation: modalIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.93) translateY(16px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* === PANEL IZQUIERDO: IMAGEN === */
+.modal-image-panel {
+  position: relative;
+  overflow: hidden;
+  background: #111;
+  height: 100%;           /* ← ocupa exactamente el alto del grid */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.modal-location-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #222;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+}
+
+/* === PANEL DERECHO: CONTENIDO === */
+.modal-body-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;           /* ← también fijo */
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Header autor */
+.modal-author-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  flex-shrink: 0;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f0f0f0;
+}
+
+.author-avatar-fallback {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #d0e8d0;
+  color: #2d6a2d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.author-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.author-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #111;
+}
+
+.author-time {
+  font-size: 0.78rem;
+  color: #888;
+}
+
+.close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #e0e0e0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.close-btn:hover {
+  background: #f5f5f5;
+  border-color: #bbb;
+}
+
+/* Divider */
+.modal-divider {
+  border: none;
+  border-top: 1px solid #ebebeb;
+  margin: 0;
+}
+
+/* Scroll content */
+.modal-scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%; /* ← agrega esto */
+  box-sizing: border-box; /* ← y esto */
+}
+
+.modal-scroll-content::-webkit-scrollbar {
+  width: 4px;
+}
+.modal-scroll-content::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+.modal-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #111;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.modal-description {
+  font-size: 0.92rem;
+  color: #444;
+  line-height: 1.7;
+  margin: 0;
+  white-space: normal;    /* asegura que haga wrap */
+  word-break: break-word; /* corta palabras largas si es necesario */
+  overflow-wrap: break-word;
+}
+
+/* Comentarios */
+.modal-comments-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%; /* ← agrega esto */
+}
+
+.comments-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.comment-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  min-width: 0;   /* ← clave en flex para evitar desbordamiento */
+  width: 100%;
+}
+
+.comment-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.comment-avatar-fallback {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e8e8e8;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.comment-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;   /* ← evita que desborde el contenedor flex */
+  width: 100%;    /* ← ocupa todo el ancho disponible */
+}
+
+.comment-author {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #222;
+  word-break: break-word;    /* ← por si el nombre es largo */
+}
+
+.comment-text {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0;
+  line-height: 1.5;
+  word-break: break-word;    /* ← evita el scroll horizontal */
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 680px) {
+  .modal-contentPost {
+    grid-template-columns: 1fr;
+    max-height: 95vh;
+  }
+
+  .modal-image-panel {
+    min-height: 220px;
+    max-height: 240px;
+  }
+}
+.like-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid #e0e0e0;
+  background: transparent;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: fit-content;
+}
+
+.like-btn:hover {
+  border-color: #e0245e;
+  color: #e0245e;
+}
+
+.like-btn.liked {
+  border-color: #e0245e;
+  background: #fff0f3;
+  color: #e0245e;
+}
+
+.comment-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%; /* ← agrega esto */
+}
+
+.comment-input {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.88rem;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  box-sizing: border-box; /* ← clave para que el 100% no desborde */
+}
+.comment-input:focus {
+  border-color: #0052a6;
+}
+
+.comment-submit-btn {
+  align-self: flex-end;
+  background: #0052a6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.comment-submit-btn:hover {
+  background: #003d80;
+}
+
+.comment-submit-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.reply-toggle-btn {
+  background: none;
+  border: none;
+  color: #0052a6;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 0;
+  margin-top: 2px;
+}
+
+.reply-toggle-btn:hover {
+  text-decoration: underline;
+}
+
+.reply-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  width: 100%; /* ← agrega esto */
+}
+
+.replies-list {
+  margin-top: 10px;
+  padding-left: 12px;
+  border-left: 2px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reply-item {
+  padding-top: 4px;
 }

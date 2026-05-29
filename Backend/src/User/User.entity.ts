@@ -4,7 +4,8 @@ import Post from '../Posts/Post.entity'
 import { Comment } from "../Comments/Comments.entity";
 import { Like } from "../Likes/Likes.entity";
 import { Trip } from "../Trips/Trip.entity";
-
+import { EventParticipant } from "../EventParticipant/EventParticipant.entity";
+import { Event } from "../Events/Event.entity";
 @Entity('users')
 export class User extends BaseEntity{
 
@@ -45,6 +46,12 @@ export class User extends BaseEntity{
 
     @OneToMany(()=> Trip, trip => trip.user)
     trips!: Trip[]
+
+    @OneToOne(()=>EventParticipant, eventParticipant => eventParticipant.user)
+    eventParticipant!: EventParticipant[]
+
+    @OneToMany(() => Event, event => event.user)
+    events!: Event[];
 
     @CreateDateColumn()
     created_at!:Date

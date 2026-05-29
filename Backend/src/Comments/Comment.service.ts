@@ -17,16 +17,16 @@ export class CommentService{
     }
     async createComment(userId:number, postId:number, data:{ content: string }, parentId?:number){
         let parentCommentEntity: Comment | null = null
-        const post = await Post.findOne({where:{id:postId}})
+        const post = await Post.findOne({where:{id:postId, is_active:true}})
         if(!post){
             throw new Error('Post no existe')
         }
-        const user = await User.findOne({where:{id:userId}})
+        const user = await User.findOne({where:{id:userId, status:1}})
         if(!user){
             throw new Error('User no existe')
         }
         if (parentId) {
-            const parentComment = await Comment.findOne({where:{id:parentId, post: { id: postId }}})
+            const parentComment = await Comment.findOne({where:{id:parentId, post: { id: postId, is_active:true }}})
             if(!parentComment){
                 throw new Error('Comentario padre no existe')
             }
@@ -54,7 +54,7 @@ export class CommentService{
         return newComment
     }
     async EditComment(userId:number, data:{ content: string }, commentId:number){
-        const userComment = await  Comment.findOne({where:{id:commentId, user:{id:userId}}})
+        const userComment = await  Comment.findOne({where:{id:commentId, is_active:true, user:{id:userId, status:1}}})
         if(!userComment){
             throw new Error('No existe o no pertenece al usuario')
         }
@@ -69,7 +69,7 @@ export class CommentService{
         return userComment
     }
     async DeleteComment(commentId:number, userId:number){
-        const comment = await Comment.findOne({where: {id:(commentId),  user: { id: userId }, is_active: true}, relations: ['post']})
+        const comment = await Comment.findOne({where: {id:(commentId),  user: { id: userId, status: 1 }, is_active: true}, relations: ['post']})
         if(!comment){
             throw new Error('Comentario no disponible o no existe')
         }

@@ -7,7 +7,10 @@ class LikeController {
 
     toggleLike = async (req: Request, res: Response) => {
         try {
-            const userId = Number(req.params.userId)
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
             const postId = Number(req.params.postId)
 
             if (isNaN(userId) || isNaN(postId)) {

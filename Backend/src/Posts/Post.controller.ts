@@ -30,7 +30,10 @@ class PostController{
     }
     getPostByUser = async (req: Request, res: Response)=>{
         try{
-            const userId = Number(req.params.userId)
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
             const getPosts = await this.postService.getPostByUser(userId)
             res.status(200).send(getPosts)
         }catch(err){
@@ -41,7 +44,10 @@ class PostController{
     }
     createPost = async (req: Request, res: Response)=>{
         try {
-            const userId = Number(req.params.userId)
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
             if (!req.file) {
                 res.status(400).json({ message: 'La imagen es obligatoria' });
                 return;
@@ -67,7 +73,10 @@ class PostController{
     };
     updatePost = async (req: Request, res: Response)=>{
         try{
-            const userId = Number(req.params.userId)
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
             const postId = Number(req.params.postId)
             const dto = plainToInstance(PostDto, req.body)
             const errors =await validate(dto)
@@ -85,7 +94,10 @@ class PostController{
     }
     patchPost = async (req: Request, res: Response) => {
         try {
-            const userId = Number(req.params.userId)
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
             const postId = Number(req.params.postId)
 
             const dto = plainToInstance(UpdatePostDto, req.body);
@@ -108,7 +120,10 @@ class PostController{
     }
     deletePost = async (req: Request, res: Response)=>{
         try{
-            const userId = Number(req.params.userId)
+           const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
             const postId = Number(req.params.postId)
             await this.postService.deletePost(postId, userId);
             return res.status(204).send()

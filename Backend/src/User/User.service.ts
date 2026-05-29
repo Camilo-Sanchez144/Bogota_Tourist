@@ -1,3 +1,4 @@
+import UserProfile from '../UserProfile/userProfile.entity';
 import { User } from './User.entity'
 import bcrypt from 'bcrypt';
 export class UserService{
@@ -6,8 +7,8 @@ export class UserService{
         return getUsers
     }
     async getUserById(userId:number){
-        const user = await User.findOneBy({id:(userId)})
-        if(!user || user.status === 0){
+        const user = await User.findOneBy({id:userId, status: 1})
+        if(!user){
             throw new Error('Usuario no encontrado o desactivado')
         }
         return user
@@ -27,19 +28,22 @@ export class UserService{
         createUser.cellphone = data.cellphone
         createUser.password = hashedPassword
         createUser.status = 1
-
         await createUser.save()
+
+        const userProfile = new UserProfile()
+        userProfile.user = createUser
+
+        await userProfile.save()
+        
         return createUser
+
 
     }
     async updateUser(userId:number, data:any){
         const hashedPassword = await bcrypt.hash(data.password, 10)
-        const register = await User.findOneBy({id:(userId)})
+        const register = await User.findOneBy({id:userId, status: 1})
         if(!register){
             throw new Error("Usuario no encontrado");
-        }
-        if(register.status===0){
-            throw new Error("Usuario desactivado");
         }
         register.username = data.username;
         register.first_name= data.first_name;
@@ -53,13 +57,10 @@ export class UserService{
         return register;
     }
     async patchUser(userId:number, data:any){
-        const register = await User.findOneBy({ id: userId })
+        const register = await User.findOneBy({ id: userId, status: 1 })
 
         if (!register) {
             throw new Error("Usuario no encontrado")
-        }
-        if (register.status === 0) {
-            throw new Error("Usuario desactivado")
         }
         register.username = data.username ?? register.username 
         register.first_name = data.first_name ?? register.first_name
@@ -78,7 +79,7 @@ export class UserService{
         return safeUser
     }
     async deleteUser(userId:number){
-        const user = await User.findOneBy({id:(userId)})
+        const user = await User.findOneBy({id:userId, status: 1})
         if(!user){
             throw new Error("Usuario no encontrado");
         }

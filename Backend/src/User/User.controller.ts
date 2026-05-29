@@ -6,7 +6,7 @@ import { UserService } from './User.service'
 import { UpdateUserDto } from './UpdateUser.dto'
 class UserController{
 
-    async ConsultarUsuario(req: Request, res: Response){
+    async getUser(req: Request, res: Response){
         try{
             const service = new UserService()
             const data = await service.getUsers()
@@ -17,11 +17,11 @@ class UserController{
             }
         }
     }
-    async ConsultarUsuarioDetalle(req:Request, res:Response){
+    async getUserById(req:Request, res:Response){
         try{
-            const userId = Number(req.params.id)
-            if (isNaN(userId)) {
-            throw new Error('ID inválido')
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
             }
             const service = new UserService()
             const data = await service.getUserById(userId)
@@ -34,7 +34,7 @@ class UserController{
                 res.status(500).send(err.message)
         }
     }
-    async AgregarUsuario(req:Request, res:Response){
+    async createUser(req:Request, res:Response){
         try{
             const service = new UserService()
             const dto = plainToInstance( UserDto, req.body )
@@ -49,12 +49,12 @@ class UserController{
             res.status(500).send(err.message);               
         }
     }
-    async ActualizarUsuario(req:Request, res:Response){
+    async updateUser(req:Request, res:Response){
         try{
             const service = new UserService()
-            const userId = Number(req.params.id)
-            if (isNaN(userId)) {
-                throw new Error('ID inválido')
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
             }
             const dto = plainToInstance( UserDto, req.body )
             const errors = await validate(dto)
@@ -68,10 +68,13 @@ class UserController{
             res.status(400).send(err.message)
         }
     }
-    async ActualizarUserParcial(req:Request, res:Response){
+    async patchUser(req:Request, res:Response){
         try{
             const service = new UserService()
-            const userId = Number(req.params.id)
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
             const dto = plainToInstance( UpdateUserDto, req.body )
             const errors = await validate(dto)
             if(errors.length > 0){
@@ -84,13 +87,16 @@ class UserController{
             res.status(400).send(err.message)
         }
     }
-    async BorrarUsuario(req:Request, res:Response){
+    async deleteUser(req:Request, res:Response){
         try{
-            const userId = Number(req.params.id)
+            const userId = Number((req as any).user?.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
             const service = new UserService()
 
             const usuarioBorrado = await service.deleteUser(userId)
-            return res.status(204).send()
+            return res.status(204).send(usuarioBorrado)
         }catch(err){
             if(err instanceof Error)
             res.status(500).send(err.message)

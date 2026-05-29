@@ -1,112 +1,139 @@
-<div class="container mt-4">
-  <button class="btn" routerLink="/home">
-    <img src="assets/images/BackArrow.png" alt="ImgBackArrow">
-    Volver al Inicio
-  </button>
-</div>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Kedebideri:wght@400;500;600;700;800;900&family=Lexend:wght@100..900&family=Noto+Sans+Kannada:wght@100..900&family=Stack+Sans+Text:wght@200..700&display=swap" rel="stylesheet">
+<div class="container-page">
+  <!-- HEADER -->
+  <div class="top-bar">
+    <button class="back-btn" routerLink="/home">
+      <img src="assets/images/BackArrow.png" alt="">
+    </button>
+  </div>
 
-<div class="title mt-2">
-  <h1><b>Planea tu propio viaje</b></h1>
-  <p>Explora una selección de planes diseñados para que vivas Bogotá a tu manera.</p>
-</div>
+  <!-- TITLE -->
+  <section class="hero">
+    <span class="hero-tag">DESCUBRE</span>
 
-<!-- MODAL -->
-<div class="modal" [class.active]="formVisible">
-  <div class="modal-content">
+    <h1>Eventos Locales</h1>
 
-    <div class="d-flex justify-content-between">
-      <h2>Planear mi Viaje<hr></h2>
-      <button class="close-btn" (click)="closeForm()">Cerrar</button>
+    <p>
+      Conecta con tu comunidad. Participa en experiencias únicas y conoce personas
+      con intereses similares.
+    </p>
+  </section>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" [class.active]="formVisible">
+
+    <div class="custom-modal">
+
+      <div class="modal-header">
+        <div>
+          <span class="mini-title">INSCRIPCION</span>
+          <h2>{{ form.planTitulo }}</h2>
+
+          <div class="modal-info">
+            <span>📅 15 Jun 2026</span>
+            <span>📍 Centro Cultural La Plaza</span>
+          </div>
+        </div>
+
+        <button class="close-icon" (click)="closeForm()">
+          ✕
+        </button>
+      </div>
+
+      <div class="price-box">
+        <span>Precio por persona</span>
+        <strong>${{ form.planPrecio }}</strong>
+      </div>
+
+      <form (ngSubmit)="enviarFormulario()">
+
+        <div class="row-inputs">
+
+          <div class="input-group">
+            <label>NOMBRE</label>
+            <input
+              type="text"
+              placeholder="Juan"
+            >
+          </div>
+
+          <div class="input-group">
+            <label>APELLIDO</label>
+            <input
+              type="text"
+              placeholder="Perez"
+            >
+          </div>
+
+        </div>
+
+        <div class="input-group">
+          <label>CORREO ELECTRONICO</label>
+          <input
+            type="email"
+            placeholder="juan@ejemplo.com"
+          >
+        </div>
+
+        <div class="input-group">
+          <label>TELEFONO</label>
+          <input
+            type="text"
+            placeholder="+1 234 567 890"
+          >
+        </div>
+
+        <button class="confirm-btn" type="submit">
+          Confirmar Inscripcion
+        </button>
+
+      </form>
+
     </div>
 
-    <form class="mb-3" (ngSubmit)="enviarFormulario()">
+  </div>
 
-      <label>Cuando relizarás el viaje</label>
-      <input type="date" [(ngModel)]="form.date" name="date" required>
+  <!-- CARDS -->
+  <section class="cards-grid">
 
-      <label>Cuántas personas viajarán</label>
-      <select [(ngModel)]="form.selectedOption" name="selectedOption">
-        @for (item of items; track item) {
-          <option [value]="item">{{ item }}</option>
-        }
-      </select>
+    @for(event of events; track event.id) {
 
-      <label>Presupuesto diario (USD)</label>
-      <input type="text" [(ngModel)]="form.presupuesto" name="presupuesto" placeholder="Ej: 100">
-      
-      <label for="">¿Qué te interesa?</label>
-      <div class="categories-container">
-        @for (c of categories; track c) {
-          <button
-            type="button"
-            (click)="toggleCategory(c)"
-            [class.selected]="selectedCategories.includes(c)"
-            class="category-btn"
-          >
-            {{ c }}
-          </button>
-        }
+      <div class="event-card">
+  <h3>{{ event.title }}</h3>
+
+  <div class="info-card">
+    <div class="event-meta">
+      <div class="event-detail">
+        <img src="assets/images/location.png" alt="">
+        <p>hola</p>
       </div>
-      <hr>
-      <label for="">Lugares para visitar</label>
-      <div class="selected-list">
-        @if (selectedlugares.length === 0) {
-          <span class="none">Ninguna</span>
-        }
-        @for (sc of selectedlugares; track sc) {
-          <span class="pill">{{ sc }}</span>
-        }
+      <div class="event-detail">
+        <img src="assets/images/calendar.png" alt="">
       </div>
-      <label for="">Añadir lugares para visitar</label>
-      @for (l of lugares; track l) {
-          <button
-            type="button"
-            (click)="togglelugares(l)"
-            [class.selected]="selectedlugares.includes(l)"
-            class="category-btn-lugar"
-          >
-            {{ l }}
-          </button>
-        }
-      <label>Plan seleccionado</label>
-      <input type="text" [(ngModel)]="form.planTitulo" name="planTitulo" readonly>
+      <div class="event-detail">
+        <img src="assets/images/people.png" alt="">
+      </div>
+    </div>
 
-      <label>Precio</label>
-      <input type="text" [(ngModel)]="form.planPrecio" name="planPrecio" readonly>
+    <hr>
 
-      <button type="submit" class="btn btn-enviar w-100 mt-3">
-        Enviar
+    <div class="card-footer">
+      <div class="price">
+        <span>$</span>
+        <strong>{{ event.price }}</strong>
+      </div>
+      <button class="join-btn" (click)="openForm(event)">
+        Inscribirse
       </button>
-    </form>
-
+    </div>
   </div>
 </div>
 
-<!-- CARDS -->
-<div class="contenedor-cards mt-5 mb-5">
-  @for(p of planes; track p) {
-    <div class="card-modern">
-      <h3><strong>{{ p.titulo }}</strong></h3>
-      <p>{{ p.descripcion }}</p>
+    }
 
-      <h4><strong>Duración:</strong></h4>
-      <p>{{ p.duracion }}</p>
-      <hr>
+  </section>
 
-      <h4><strong>Destacados:</strong></h4>
-      <div class="tags">
-        @for (d of p.destacados; track d) {
-          <span>{{ d }}</span>
-        }
-      </div>
-      <hr>
-
-      <h4><strong>Precio:</strong></h4>
-      <p>${{ p.precio }}</p>
-
-      <button class="btn btn-enviar w-100" (click)="openForm(p)">
-        Planear con este viaje
-      </button>
-    </div>
-  }
 </div>

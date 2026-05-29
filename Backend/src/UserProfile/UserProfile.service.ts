@@ -3,7 +3,7 @@ import User from '../User/User.entity'
 class UserProfileService{
     async getProfileByUserId(profileId:number){
         const profile = await UserProfile.findOne({
-            where: { user: { id: profileId } },
+            where: { user: { id: profileId, status:1 } },
             relations: ['user']
         })
         if(!profile){
@@ -11,17 +11,14 @@ class UserProfileService{
         }
         return profile
     }
-    async createProfile(data:any){
+/*     async createProfile(userId:number, data:any){
         const saveUser = new UserProfile()
-        const user = await User.findOne({where:{id:Number(data.user)}})
+        const user = await User.findOne({where:{id:userId, status:1}})
         if(!user){
             throw new Error('No se encontró el usuario')
         }
-        if(user?.status==0){
-            throw new Error("Usuario desactivado");
-        }
         const existingProfile = await UserProfile.findOne({
-            where: { user: { id: user.id } }
+            where: { user: { id: userId } }
         })
         if (existingProfile) {
             throw new Error('El usuario ya tiene perfil')
@@ -34,55 +31,32 @@ class UserProfileService{
         await saveUser.save()
 
         return saveUser
-    }
-    async updateProfile(profileId:number, data:any){
-        const updateProfile = await UserProfile.findOne({
-            where: { id: (profileId) },
-            loadRelationIds: true
+    } */
+    async updateProfile(userId:number, data:any){
+        const profile = await UserProfile.findOne({
+            where: { user :{id:userId, status:1} },
+            relations:['user']
         })
-        if(!updateProfile){
+        if(!profile){
             throw new Error("Perfil no encontrado");
         }
-        const validateUser = await User.findOne({
-            where: {id:Number(updateProfile.user)}
-        })
-        if(!validateUser){
-            throw new Error('No se encontró el usuario')
-        }
-        if(validateUser?.status===0){
-            throw new Error("Usuario desactivado");
-        }
-        if(Number(updateProfile.user) != data.user){
-            throw new Error("Usuario no coincide el id");
-        }
-        updateProfile.bio = data.bio;
-        updateProfile.date_of_birth = data.date_of_birth;
-        updateProfile.profile_picture = data.profile_picture;
+        profile.bio = data.bio;
+        profile.date_of_birth = data.date_of_birth;
+        profile.profile_picture = data.profile_picture;
 
-        await updateProfile.save();
+        await profile.save();
 
-        return updateProfile;
+        return profile;
     }
-    async patchProfile(profileId: number, data: any) {
+    async patchProfile(userId: number, data: any) {
         const updateUser = await UserProfile.findOne({
-            where: { id: (profileId) },
-            loadRelationIds: true
+            where: { user:{id:userId, status:1}},
+             relations:['user']
         })
         if(!updateUser){
             throw new Error("Usuario no encontrado");
         }
-        const validateUser = await User.findOne({
-            where: {id:Number(updateUser.user)}
-        })
-        if(!validateUser){
-            throw new Error('No se encontró el usuario')
-        }
-        if(validateUser?.status===0){
-            throw new Error("Usuario desactivado");
-        }
-        if(Number(updateUser.user) != data.user){
-            throw new Error("Usuario no coincide el id");
-        }
+
         updateUser.bio = data.bio ?? updateUser.bio
         updateUser.date_of_birth = data.date_of_birth ?? updateUser.date_of_birth
         updateUser.profile_picture = data.profile_picture ?? updateUser.profile_picture
@@ -91,13 +65,10 @@ class UserProfileService{
         
         return updateUser
     }
-    async deleteProfile(profileId:number){
-        const userDelete = await UserProfile.findOneBy({id:(profileId)})
+    async deleteProfile(userId:number){
+        const userDelete = await UserProfile.findOne({where:{user:{id:userId, status:1}}, relations:['user']})
         if(!userDelete){
             throw new Error("Usuario no encontrado");
-        }
-        if (Number(userDelete.user) !== profileId) {
-            throw new Error('No autorizado')
         }
         await userDelete.remove()
         return userDelete;

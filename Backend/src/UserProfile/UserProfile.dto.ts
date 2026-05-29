@@ -6,15 +6,8 @@ export class UserProfileDto{
         @IsString()
         bio!:String;
 
-        @IsString()
-        @IsNotEmpty()
-        profile_picture!: String;
-
         @IsNotEmpty()
         @Type(() => Date)
         @IsDate()
         date_of_birth!:Date
-
-        @IsNumber()
-        user!: Number;
 }

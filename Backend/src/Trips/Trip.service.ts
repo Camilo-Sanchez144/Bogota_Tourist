@@ -8,7 +8,7 @@ import User from '../User/User.entity'
 export class TripService {
 
     async getTripsByUser(userId:number){
-        const getTrips = await Trip.find({where: {user:{id:userId}}})
+        const getTrips = await Trip.find({where: {user:{id:userId, status:1}}, relations:['days', 'days.place']})
         if(getTrips.length === 0){
             throw new Error('No se encontraron viajes activos')
         }
@@ -21,7 +21,7 @@ export class TripService {
         await queryRunner.startTransaction()
 
         try {
-            const user = await User.findOne({ where: { id: userId } })
+            const user = await User.findOne({ where: { id: userId, status:1 } })
 
             if (!user) throw new Error('Usuario no existe')
 
@@ -47,7 +47,7 @@ export class TripService {
 
                 for (const placeData of dayData.places) {
 
-                    const place = await Place.findOne({
+                    const place = await  queryRunner.manager.findOne(Place,{
                         where: { id: placeData.place_id }
                     })
 
@@ -83,12 +83,12 @@ export class TripService {
 
         try {
             const user = await queryRunner.manager.findOne(User, {
-                where: { id: userId }
+                where: { id: userId, status: 1 }
             })
             if (!user) throw new Error('Usuario no existe')
             const trip = await queryRunner.manager.findOne(Trip, {
-                where: { id: tripId, user: { id: userId } },
-                relations: ['user', 'days', 'days.places']
+                where: { id: tripId, user: { id: userId, status: 1 } },
+                relations: ['user', 'days', 'days.place']
             })
             if(!trip){
                 throw new Error ('El trip no pertenece al usuario')
@@ -150,7 +150,16 @@ export class TripService {
 
             await queryRunner.commitTransaction()
 
-            return trip
+            const savedTrip = await Trip.findOne({
+                where: { id: trip.id },
+                relations: {
+                    days: {
+                        place: true
+                    }
+                }
+            })
+
+            return savedTrip
 
         } catch (err) {
             await queryRunner.rollbackTransaction()
@@ -159,16 +168,45 @@ export class TripService {
             await queryRunner.release()
         }
     }
-    async deleteTripPlace(dayId: number, placeId: number, userId: number) {
+    async deleteTrip(tripId: number, userId: number) {
+    const trip = await Trip.findOne({
+        where: { id: tripId, user: { id: userId, status:1 } }
+    })
+
+    if (!trip) {
+        throw new Error('Trip no encontrado o no autorizado')
+    }
+
+        await trip.remove()
+
+        return { message: 'Trip eliminado' }
+    }
+    async deleteTripDay(tripId: number, dayNumber: number, userId: number) {
+        const day = await TripDay.findOne({
+            where: {
+                day_number: dayNumber,
+                trips: { id: tripId, user: { id: userId, status:1 } }
+            }
+        })
+
+        if (!day) {
+            throw new Error('Día no encontrado')
+        }
+
+        await day.remove()
+
+        return { message: 'Día eliminado' }
+    }
+    async deleteTripPlace(userId: number, tripPlaceId: number, dayNumber: number) {
     const tripPlace = await TripPlace.findOne({
         where: {
+            id:tripPlaceId,
             trip_day: {
-                id: dayId,
-                trips: { user: { id: userId } }
+                day_number: dayNumber,
+                trips: { user: { id: userId, status:1 } }
             },
-            place: { id: placeId }
         },
-        relations: ['trip_day', 'trip_day.trip', 'trip_day.trip.user']
+        relations: ['trip_day', 'trip_day.trips', 'trip_day.trips.user']
         })
 
         if (!tripPlace) {

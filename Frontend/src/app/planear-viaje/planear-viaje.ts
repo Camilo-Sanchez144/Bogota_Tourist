@@ -2,10 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TripsService } from '../services/trips.service';
-import { LocationsService } from '../services/locations.service';
-import { Trip } from '../interfaces/Trip';
+import { EventService } from '../services/event.service';
 import { Place } from '../interfaces/Place';
+import { Event } from '../interfaces/Event';
 
 @Component({
   selector: 'app-planear-viaje',
@@ -14,9 +13,9 @@ import { Place } from '../interfaces/Place';
   styleUrl: './planear-viaje.css',
 })
 export class PlanearViaje implements OnInit {
-  private tripsService = inject(TripsService);
-  private locationsService = inject(LocationsService);
+  private eventsService = inject(EventService);
 formVisible = false;
+events: Event[] = []
 
 selectedPlan: any = null;
 
@@ -24,7 +23,7 @@ items = ['1', '2', '3', '4', '5', 'Más'];
 selectedOption = '';
 
 form = {
-  date: '',
+  titulo: '',
   selectedOption: '',
   presupuesto: '',
   planTitulo: '',
@@ -44,9 +43,11 @@ openForm(plan: any) {
 closeForm() {
   this.formVisible = false;
 }
-
-enviarFormulario() {
-    const trip: Trip = {
+enviarFormulario(){
+  
+}
+/* enviarFormulario() {
+    const event: Event = {
       title: this.form.planTitulo || 'Mi Viaje a Bogotá',
       travel_date: this.form.date,
       number_of_people: parseInt(this.form.selectedOption) || 1,
@@ -77,13 +78,13 @@ enviarFormulario() {
         }
       }
     });
-  }
-limpiarFormulario() {
+  } */
+/* limpiarFormulario() {
   this.form.date = '';
   this.form.selectedOption = '';
   this.form.presupuesto = '';
-}
-categories = [
+} */
+/* categories = [
   "Historia",
   "Gastronomía",
   "Naturaleza",
@@ -94,21 +95,22 @@ categories = [
   lugares: string[] = [];
   selectedlugares: string[] = [];
   selectedCategories: string[] = [];
-
+ */
   ngOnInit(): void {
-    this.loadPlaces();
+    this.loadEvents();
   }
 
-  loadPlaces() {
-    this.locationsService.getPlaces().subscribe({
-      next: (places: Place[]) => {
-        this.lugares = places.map(p => p.name);
+  loadEvents() {
+    this.eventsService.getEvent().subscribe({
+      next: (data) => {
+        this.events = data
+        console.log(data)
       },
-      error: (err) => console.error('Error loading places', err)
+      error: (err) => console.error('Error loading events', err)
     });
   }
 
-  togglelugares(lugares: string) {
+  /* togglelugares(lugares: string) {
   const index = this.selectedlugares.indexOf(lugares);
 
   if (index === -1) {
@@ -179,5 +181,5 @@ planes =[
     destacados:['Barrios','Arte Urbano','Vida Nocturna', 'Eventos'],
     precio: 300
   }
-]
+] */
 }

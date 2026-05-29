@@ -3,6 +3,6 @@ import LikeController from './Likes.controller';
 
 const router = Router();
 
-router.post('/post/:postId/user/:userId', LikeController.toggleLike);
+router.post('/post/:postId', LikeController.toggleLike);
 
 export default router;

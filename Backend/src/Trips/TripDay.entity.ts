@@ -3,7 +3,7 @@ import { Trip } from "./Trip.entity"
 import { TripPlace } from "./TripPlace.entity"
 
 @Entity('trip_days')
-@Unique(['trip', 'day_number'])
+@Unique(['trips', 'day_number'])
 export class TripDay extends BaseEntity{
     @PrimaryGeneratedColumn()
     id!:number

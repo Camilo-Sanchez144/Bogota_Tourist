@@ -9,7 +9,7 @@ import { Place } from '../interfaces/Place';
 })
 export class LocationsService {
   private http = inject(HttpClient);
-  private placesUrl: string = appsettings.placesUrl;
+  private placesUrl: string = appsettings.eventsUrl;
 
   constructor() {}
 

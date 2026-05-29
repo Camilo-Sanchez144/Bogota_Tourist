@@ -41,27 +41,39 @@
   color: black;
   font-size: 50px;
 }
-.articulosdescripcion{
-  gap:30px;
+.articulosdescripcion {
+  gap: 30px;
   justify-content: center;
   flex-wrap: wrap;
 }
+
 .articulosdescripcion .card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 22rem;
   max-width: 100%;
+  display: flex;
+  flex-direction: column;
 }
+
 .articulosdescripcion .card:hover {
   transform: scale(1.01);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
-.boton{
-  border: 2px solid #0052a6;
-  color: #0052a6;
+
+.articulosdescripcion .card-img-top {
+  height: 220px;
+  object-fit: cover; 
+  width: 100%;
 }
-.boton:hover{
-  background-color: #0052a6;
-  color: white;
+
+.articulosdescripcion .card-body {
+  flex: 1;            
+  display: flex;
+  flex-direction: column;
+}
+
+.articulosdescripcion .card-text {
+  flex: 1;              
 }
 .fondo-full {
   width: 100%;

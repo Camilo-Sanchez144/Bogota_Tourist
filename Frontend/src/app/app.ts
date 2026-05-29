@@ -7,9 +7,9 @@ import { BlogBogota } from './blog-bogota/blog-bogota'
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer, BlogBogota],
+  imports: [RouterOutlet, Header, Footer],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css']
 })
 export class App implements OnInit, OnDestroy {
   protected readonly title = signal('ProyectoUTurismo');

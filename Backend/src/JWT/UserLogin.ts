@@ -10,7 +10,7 @@ class UserLogin{
             if(!user){
                 return res.status(404).json({msg:`Usuario con el email ${email} no existe`})
             }
-            const validPassword = bcrypt.compare(password, user.password)
+            const validPassword = await bcrypt.compare(password, user.password)
             if(!validPassword){
                 return res.status(401).json({msg:`Contraseña no válida`})
             }
