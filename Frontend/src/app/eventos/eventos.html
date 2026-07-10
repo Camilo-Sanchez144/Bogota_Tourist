@@ -1,0 +1,103 @@
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Kedebideri:wght@400;500;600;700;800;900&family=Lexend:wght@100..900&family=Noto+Sans+Kannada:wght@100..900&family=Stack+Sans+Text:wght@200..700&display=swap" rel="stylesheet">
+
+<div class="container-page">
+  <div class="top-bar">
+    <button class="back-btn" routerLink="/home">
+      <img src="assets/images/BackArrow.png" alt="">
+    </button>
+  </div>
+
+  <section class="hero">
+    <span class="hero-tag">DESCUBRE</span>
+    <h1>Eventos Locales</h1>
+    <p>
+      Conecta con tu comunidad. Participa en experiencias únicas y conoce personas
+      con intereses similares.
+    </p>
+  </section>
+
+    <div class="modal-overlay mt-5" [class.active]="formVisible">
+      <div class="custom-modal">
+        <div class="modal-header">
+          <div>
+            <span class="mini-title">INSCRIPCION</span>
+            <h2>{{ event?.title }}</h2> 
+            <div class="modal-info">
+              <span><img src="assets/images/calendar.png" alt="icon-calendar" width="17px"> {{ event?.date | date:'dd-MM-yyyy'}}</span>
+            </div>
+          </div>
+          <button class="close-icon" (click)="closeForm()">✕</button>
+        </div>
+
+      <div class="price-box">
+        <span>Precio por persona</span>
+        <strong>${{ event?.price }}</strong>
+      </div>
+
+      <form (ngSubmit)="enviarFormulario()">
+        @if(error){
+        <p class="text-danger bg-danger bg-opacity-10 pt-2 p-1 mb-2 rounded-3">{{error}}</p>
+        }
+        <div class="row-inputs">
+          <div class="input-group">
+            <label>NOMBRE</label>
+            <input type="text" [value]="user?.first_name" readonly>
+          </div>
+          <div class="input-group">
+            <label>APELLIDO</label>
+            <input type="text" [value]="user?.last_name" readonly>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>CORREO ELECTRONICO</label>
+          <input type="text" [value]="user?.email" readonly>
+        </div>
+        <div class="input-group">
+          <label>TELEFONO</label>
+          <input type="text" [value]="user?.cellphone" readonly>
+        </div>
+        <button class="confirm-btn" type="submit" (click)="sendForm(event?.id)">Confirmar Inscripcion</button>
+      </form>
+    </div>
+  </div>
+
+  <section class="cards-grid">
+    @for(event of events; track event.id) {
+
+      <div class="event-card">
+        <h3>{{ event.title }}</h3>
+        <div class="info-card">
+          <div class="event-meta">
+            <div class="event-detail">
+              <img src="assets/images/location.png" alt="">
+              <p>{{ event.location }}</p>
+            </div>
+            <div class="event-detail">
+              <img src="assets/images/calendar.png" alt="">
+              <p>{{ event.date | date:'dd/MM/yyyy' }}</p>
+            </div>
+            <div class="event-detail">
+              <img src="assets/images/people.png" alt="">
+              <p>{{ event.max_people }}</p>
+            </div>
+            <div class="event-detail">
+              <p>Personas Registradas: {{ event.current_people }}</p>
+            </div>
+          </div>
+          <hr>
+            <div class="card-footer">
+              <div class="price">
+                <span>$</span>
+                <strong>{{ event.price }}</strong>
+              </div>
+              <button class="join-btn" (click)="loadEventById(event.id)">Inscribirse</button>
+            </div>
+        </div>
+    </div>
+  }
+
+</section>
+

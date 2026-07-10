@@ -5,7 +5,7 @@ import { Home } from './home/home';
 import { BlogBogota } from './blog-bogota/blog-bogota';
 import { Explorarmapa } from './explorarmapa/explorarmapa';
 import { DashboardUser } from './dashboard-user/dashboard-user';
-import { PlanearViaje } from './planear-viaje/planear-viaje';
+import { PlanearViaje } from './eventos/eventos';
 import { AboutUs } from './pages/about-us/about-us';
 import { Contact } from './pages/contact/contact';
 import { PrivacyPolicy } from './pages/privacy-policy/privacy-policy';

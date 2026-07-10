@@ -1,13 +1,19 @@
 import { Event } from "./Event.entity";
 import User from "../User/User.entity";
+import { EventParticipant, EventStatus } from "../EventParticipant/EventParticipant.entity";
 export class EventService {
 
     async getEvents() {
-        return await Event.find({where: { is_active: true },order: { date: "ASC" }});
+        return await Event.find({where: { is_active: true },order: { date: "ASC" }, relations:['user']});
+    }
+    
+    async getEventsByUser(userId:number){
+        const events = await Event.find({where:{user:{id:userId}, is_active:true}})
+        return events 
     }
 
     async getEventById(eventId: number) {
-        const event = await Event.findOne({where: { id: eventId, is_active: true },relations: ['eventParticipant.user']});
+        const event = await Event.findOne({where: { id: eventId, is_active: true },relations: ['eventParticipant.user', 'user']});
         if (!event) throw new Error('Evento no existe');
 
         return event;

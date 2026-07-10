@@ -1,6 +1,6 @@
 import { Component, inject, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { Acceso } from '../services/acceso';
+import { UserService } from '../services/user.service';
 import { FormBuilder, FormGroup, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
 import { Usuario } from '../interfaces/Usuario';
 import { emailValidator, usernameValidator, phoneValidator, nameValidator, simplePasswordValidator } from '../validators/custom-validators';
@@ -28,7 +28,7 @@ mostrarSuccess: boolean = false;
 mensajeSucccess:string = "";
 user=localStorage.getItem("user");
 
-private accesoService = inject(Acceso);
+private accesoService = inject(UserService);
 private router = inject(Router);
 public formBuild = inject(FormBuilder);
 

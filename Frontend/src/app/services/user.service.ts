@@ -1,3 +1,4 @@
+import { userProfile } from './../interfaces/UserProfile';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { appsettings } from '../settings/appsettings';
@@ -9,13 +10,13 @@ import { LoginCredentials } from '../interfaces/LoginCredentials';
 @Injectable({
   providedIn: 'root',
 })
-export class Acceso {
-  private http =inject(HttpClient);
-  private baseUrl:string = appsettings.apiUrl;
-  private usersUrl:string = appsettings.usersUrl; // usa la URL exacta que expone tu backend
+export class UserService {
+  private http = inject(HttpClient);
+  private userProfileUrl:string =appsettings.userProfileUrl;
+  private usersUrl:string = appsettings.usersUrl;
   private tokenUrl:string = appsettings.tokenUrl;
 
-  constructor(){}
+
 
   private authHeaders(): HttpHeaders | undefined {
     const token = localStorage.getItem('access');
@@ -29,18 +30,18 @@ export class Acceso {
     return this.http.post<ResponseAcceso>(`${this.tokenUrl}`, objeto)
   }
 
-  /**
-   * Obtiene un usuario por id usando el token actual
-   */
   getUserById(id: number): Observable<Usuario> {
-    const headers = this.authHeaders();
-    return this.http.get<Usuario>(`${this.usersUrl}${id}/`, { headers });
+    return this.http.get<Usuario>(`${this.usersUrl}`,{ headers: this.authHeaders() });
   }
-
-  /** Actualiza un usuario por id (PUT). Usa FormData o JSON según lo que envíes */
   updateUser(id: number, body: any): Observable<Usuario> {
-    const headers = this.authHeaders();
-    return this.http.put<Usuario>(`${this.usersUrl}${id}/`, body, { headers });
+    return this.http.put<Usuario>(`${this.usersUrl}`, body, { headers: this.authHeaders() });
   }
+  patchUser(body:any):Observable<userProfile>{
+    return this.http.patch<userProfile>(`${this.usersUrl}`, body, { headers: this.authHeaders() })
+  }
+  updateUserProfile(id: number, body: any): Observable<userProfile> {
+    return this.http.put<userProfile>(`${this.userProfileUrl}`, body, { headers: this.authHeaders() });
+  }
+  
 
 }

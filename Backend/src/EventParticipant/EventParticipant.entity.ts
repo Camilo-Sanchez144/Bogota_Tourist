@@ -13,7 +13,7 @@ export class EventParticipant extends BaseEntity{
     @PrimaryGeneratedColumn()
     id!:number
 
-    @OneToOne(() => User, user => user.eventParticipant,{ onDelete: 'CASCADE' })
+    @ManyToOne(() => User, user => user.eventParticipant,{ onDelete: 'CASCADE' })
     @JoinColumn({name: 'userId'})
     user!: User
 

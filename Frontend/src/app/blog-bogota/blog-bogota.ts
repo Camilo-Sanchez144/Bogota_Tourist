@@ -20,7 +20,7 @@ export class BlogBogota implements OnInit {
   comments: Comments[] = [];
   posts: Post[] = [];
 
-  replyingTo: number | null = null;   // id del comentario al que se responde
+  replyingTo: number | null = null;   
   replyContent: string = '';
   newComment: string = '';
   liked: boolean = false;
@@ -64,7 +64,7 @@ export class BlogBogota implements OnInit {
     this.postVisible = false;
     this.selectedPost = null;
     this.comments = [];
-    this.replyingTo = null;     // ← agrega estos
+    this.replyingTo = null; 
     this.replyContent = '';
     this.newComment = '';
     this.liked = false;

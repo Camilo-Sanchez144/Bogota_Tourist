@@ -17,6 +17,21 @@ class EventController{
             }
         }
     }
+    
+    getEventsByUser = async(req:Request, res:Response) => {
+        try{
+            const userId = Number((req as any).user.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
+            const events  = await this.eventService.getEventsByUser(userId)
+            res.status(200).send(events)
+        }catch(err){
+            if(err instanceof Error){
+            res.status(500).send(err.message);
+            }
+        }
+    }
     getEventById = async(req:Request, res:Response)=>{
         try{
             const eventId = Number(req.params.eventId)
@@ -34,7 +49,7 @@ class EventController{
     }
     createEvent = async(req:Request, res:Response)=>{
         try{
-            const userId = Number((req as any).user?.id)
+            const userId = Number((req as any).user.id)
             if (!userId || Number.isNaN(userId)) {
                 return res.status(400).json({ message: 'Id inválido en el token' })
             }

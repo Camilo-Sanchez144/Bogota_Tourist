@@ -25,8 +25,8 @@ export class ExperiencesService {
     return this.http.get<Post[]>(this.postsUrl, { headers: this.authHeaders() });
   }
 
-  getPostsByUser(userId: number): Observable<Post[]> {
-    return this.http.get<Post[]>(`${this.postsUrl}?user_id=${userId}`);
+  getPostsByUser(): Observable<Post[]> {
+    return this.http.get<Post[]>(this.postsUrl, { headers: this.authHeaders() });
   }
 
   getPostById(id: number): Observable<Post> {
@@ -36,12 +36,16 @@ export class ExperiencesService {
     return this.http.get<Comments[]>(`${this.commentsUrl}/${id}`,{headers: this.authHeaders()} )
   }
 
+  deletePost(postId:number): Observable<Post>{
+    return this.http.delete<Post>(`${this.postsUrl}/${postId}/user`, { headers: this.authHeaders() })
+  }
+
   createPost(post: FormData): Observable<Post> {
     return this.http.post<Post>(`${this.postsUrl}/createPost`, post, { headers: this.authHeaders() });
   }
 
-  updatePost(id: number, post: Partial<Post>): Observable<Post> {
-    return this.http.put<Post>(`${this.postsUrl}${id}/`, post, { headers: this.authHeaders() });
+  updatePost(id: number, body:any): Observable<Post> {
+    return this.http.put<Post>(`${this.postsUrl}/${id}/user`, body, { headers: this.authHeaders() });
   }
 
   uploadPostMedia(postId: number, file: File): Observable<any> {

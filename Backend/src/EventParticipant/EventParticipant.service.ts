@@ -107,4 +107,17 @@ export class EventParticipantService {
             await queryRunner.release();
         }
     }
+    async getEventsByUserParticipant(userId: number) {
+        const participants = await EventParticipant.find({
+            where: {
+                user: { id: userId },
+                status: EventStatus.CONFIRMED,
+                event: { is_active: true }
+            },
+            relations: ['event', 'event.user']
+        });
+
+        return participants.map((participant) => participant.event);
+    }
+    
 }

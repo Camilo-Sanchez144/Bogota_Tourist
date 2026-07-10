@@ -40,5 +40,23 @@ class EventParticipant{
         }
     }
     }
+    getEventsByUserParticipant = async(req:Request, res:Response)=>{
+        try{
+            const userId = Number((req as any).user.id)
+            if (!userId || Number.isNaN(userId)) {
+                return res.status(400).json({ message: 'Id inválido en el token' })
+            }
+            if(isNaN(userId)) {
+                res.status(400).send('user debe ser un numero')
+                return;
+            }
+            const events  = await this.eventParticipantService.getEventsByUserParticipant(userId)
+            res.status(200).send(events)
+        }catch(err){
+            if(err instanceof Error){
+            res.status(500).send(err.message);
+            }
+        }
+    }
 }
 export default new EventParticipant()

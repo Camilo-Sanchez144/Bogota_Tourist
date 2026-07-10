@@ -132,7 +132,7 @@
 
 .event-detail p{
   color: #666;
-  font-size: 15px;
+  font-size: 17px;
 }
 
 .event-card hr{
@@ -233,7 +233,7 @@
   color: #666;
   font-size: 14px;
   flex-wrap: wrap;
-}
+} 
 
 .close-icon{
   border: none;
@@ -244,29 +244,28 @@
 }
 
 .price-box{
-  margin-top: 28px;
+  margin-top: 10px;
   background: #f5f5f5;
-  padding: 20px;
+  padding: 10px 5px 2px;
   border-radius: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .price strong{
-  color: #ddd;
+  color: #575757;
+  font-size: 25px;
 }
 .price-box span{
-  color: #555;
+  color: #000000;
 }
 
 .price-box strong{
   font-size: 36px;
 }
 
-/* FORM */
-
 form{
-  margin-top: 25px;
+  margin-top: 5px;
 }
 
 .row-inputs{
@@ -355,4 +354,24 @@ form{
     width: 100%;
   }
 
+}
+.close-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #e0e0e0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start; 
+  padding-top: 4px;
+}
+
+.close-icon:hover {
+  background: #f5f5f5;
+  border-color: #bbb;
 }

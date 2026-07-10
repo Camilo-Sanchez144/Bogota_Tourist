@@ -47,7 +47,7 @@ export class User extends BaseEntity{
     @OneToMany(()=> Trip, trip => trip.user)
     trips!: Trip[]
 
-    @OneToOne(()=>EventParticipant, eventParticipant => eventParticipant.user)
+    @OneToMany(()=>EventParticipant, eventParticipant => eventParticipant.user)
     eventParticipant!: EventParticipant[]
 
     @OneToMany(() => Event, event => event.user)

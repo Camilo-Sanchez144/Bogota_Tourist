@@ -1,16 +1,20 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Acceso } from '../services/acceso';
+import { UserService } from '../services/user.service';
 //import { TripsService } from '../services/event.service';
 import { ExperiencesService } from '../services/experiences.service';
 import { LocationsService } from '../services/locations.service';
 //import { Trip } from '../interfaces/Trip';
+import { EventService } from '../services/event.service';
 import { Post } from '../interfaces/Post';
 import { Place } from '../interfaces/Place';
 import { appsettings } from '../settings/appsettings';
 import { emailValidator, phoneValidator } from '../validators/custom-validators';
+import { AuthService } from '../services/auth.service';
+import { Usuario } from '../interfaces/Usuario';
+import { IEvent } from '../interfaces/Event'
 
 @Component({
   selector: 'app-dashboard-user',
@@ -19,118 +23,53 @@ import { emailValidator, phoneValidator } from '../validators/custom-validators'
   styleUrl: './dashboard-user.css',
 })
 export class DashboardUser implements OnInit {
-  private accesoService = inject(Acceso);
-  //private tripsService = inject(TripsService);
   private experiencesService = inject(ExperiencesService);
-  private locationsService = inject(LocationsService);
   private fb = inject(FormBuilder);
-  
-  user = JSON.parse(localStorage.getItem("user") || '{}');
-  //trips: Trip[] = [];
+  private userService = inject(UserService);
+  private eventsService = inject(EventService);
+  private authservice =inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+  user: Usuario | null = null;
   posts: Post[] = [];
   reviews: any[] = [];
+  eventsParticipant: IEvent[] = [];
+  events: IEvent[] = [];
   placesList: Place[] = [];
-  
-  // Properties for Trip Edit (matching PlanearViaje)
-  categories = [
-    "Historia",
-    "Gastronomía",
-    "Naturaleza",
-    "Vida nocturna",
-    "Arte",
-    "Aventura"
-  ];
-  lugares: string[] = [];
-  selectedlugares: string[] = [];
-  selectedCategories: string[] = [];
 
-  nombre = [this.user?.first_name, this.user?.last_name].filter(Boolean).join(' ').trim();
   ngOnInit(): void {
     this.loadTrips();
     this.loadPosts();
-    this.loadPlaces();
-    this.loadReviews();
+    this.loadUser();
+    this.eventParticipant();
+    this.eventsByUser();
   }
+  passwordError = ''
+  formPasswordVisible = false;
+  successMessage = '';
+  showSuccess = false;
+  confirmDeletePost = false;
+  confirmDeleteEventParticipation = false;
+  confirmDeleteEvent = false;
+  tripFormVisible = false;
+  selectedTripId: number | null = null;
 
-  loadPlaces() {
-    this.locationsService.getPlaces().subscribe({
-      next: (places: Place[]) => {
-        this.placesList = places;
-        this.lugares = places.map(p => p.name);
-      },
-      error: (err) => console.error('Error loading places', err)
-    });
-  }
+  selectedlugares: string[] = [];
+  selectedCategories: string[] = [];
 
-  loadReviews() {
-    this.locationsService.getUserReviews().subscribe({
-      next: (reviews) => {
-        this.reviews = reviews;
-      },
-      error: (err) => console.error('Error loading reviews', err)
-    });
-  }
-
-  togglelugares(lugares: string) {
-    const index = this.selectedlugares.indexOf(lugares);
-    if (index === -1) {
-      this.selectedlugares.push(lugares);
-    } else {
-      this.selectedlugares.splice(index, 1);
-    }
-  }
-
-  toggleCategory(category: string) {
-    const index = this.selectedCategories.indexOf(category);
-    if (index === -1) {
-      this.selectedCategories.push(category);
-    } else {
-      this.selectedCategories.splice(index, 1);
-    }
-  }
-
-  loadTrips() {
-   /*  console.log('Iniciando carga de viajes...');
-    this.tripsService.getTrips().subscribe({
-      next: (trips) => {
-        console.log('Viajes cargados desde el backend:', trips);
-        this.trips = trips;
-        console.log('Variable trips actualizada:', this.trips);
-      },
-      error: (err) => console.error('Error cargando viajes:', err)
-    }); */
-  }
-
-  loadPosts() {
-    if (this.user?.id) {
-      this.experiencesService.getPostsByUser(this.user.id).subscribe({
-        next: (posts) => {
-          this.posts = posts;
-        },
-        error: (err) => console.error('Error cargando posts:', err)
-      });
-    }
-  }
-
-/*   get activeTripsCount(): number {
-    return this.trips.filter(t => t.is_active).length;
-  }
-
-  get completedTripsCount(): number {
-    return this.trips.filter(t => !t.is_active).length;
-  } */
-
-  email = this.user.email;
-  cellphone = this.user.cellphone;
-  bio: string = this.user.bio || '';
+  name = this.user?.first_name
+  email = this.user?.email;
+  cellphone = this.user?.cellphone;
+  bio: string = this.user?.bio || '';
   profile_picture: File | null = null;
-  previewUrl: string = this.resolvePhoto(this.user.profile_picture) || 'https://i.imgur.com/1X4pYkP.png';
   previewUrlTemp: string | null = null;
-  profileForm: FormGroup = this.fb.group({
-    email: [this.email || '', [Validators.required, emailValidator()]],
-    cellphone: [this.cellphone || '', [Validators.required, phoneValidator()]],
-    bio: [this.bio || ''],
-  });
+  date_of_birth: Date | null = null;
+
+  postFormVisible = false;
+  selectedPostId: number | null = null;
+  selectedEventParticipationId: number | null = null;
+  selectedEventId: number | null = null;
+  selectedPostFile: File | null = null;
+  postPreviewUrlTemp: string | null = null;
 
   passwordForm: FormGroup = this.fb.group(
     {
@@ -139,15 +78,6 @@ export class DashboardUser implements OnInit {
     },
     { validators: this.passwordsMatchValidator }
   );
-
-  passwordError = ''
-  formPasswordVisible = false;
-  successMessage = '';
-  showSuccess = false;
-
-  // Trip Edit Logic
-  tripFormVisible = false;
-  selectedTripId: number | null = null;
   
   tripForm: FormGroup = this.fb.group({
     title: ['', Validators.required],
@@ -160,43 +90,78 @@ export class DashboardUser implements OnInit {
     is_active: [true]
   });
 
-  /* openTripModal(trip: Trip) {
-    this.selectedTripId = trip.id || null;
-    
-    // Parse description to extract categories and places
-    this.selectedCategories = [];
-    this.selectedlugares = [];
-    
-    if (trip.description) {
-      // Robust parsing for Categories
-      const catRegex = /Categorías:\s*(.*?)(?=\.?\s*Lugares:|$)/i;
-      const catMatch = trip.description.match(catRegex);
-      
-      if (catMatch && catMatch[1]) {
-        this.selectedCategories = catMatch[1].split(',').map(c => c.trim()).filter(c => c !== '');
-      }
-      
-      // Robust parsing for Places
-      const lugRegex = /Lugares:\s*(.*)$/i;
-      const lugMatch = trip.description.match(lugRegex);
-      
-      if (lugMatch && lugMatch[1]) {
-        this.selectedlugares = lugMatch[1].split(',').map(l => l.trim()).filter(l => l !== '');
-      }
-    }
+  profileForm: FormGroup = this.fb.group({
+    email: [this.email || '', [Validators.required, emailValidator()]],
+    cellphone: [this.cellphone || '', [Validators.required, phoneValidator()]],
+    bio: [this.bio || '', [Validators.required]],
+    date_of_birth: [this.date_of_birth || '', [Validators.required]]
+  });
 
-    this.tripForm.patchValue({
-      title: trip.title,
-      description: trip.description,
-      travel_date: trip.travel_date,
-      number_of_people: trip.number_of_people,
-      daily_budget: trip.daily_budget,
-      plan_name: trip.plan_name,
-      plan_price: trip.plan_price,
-      is_active: trip.is_active
-    });
-    this.tripFormVisible = true;
-  } */
+  reviewFormVisible = false;
+  reviewForm: FormGroup = this.fb.group({
+    place: ['', Validators.required],
+    title: ['', Validators.required],
+    comment: ['', [Validators.required, Validators.minLength(10)]],
+    rating: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
+    visit_date: [new Date().toISOString().split('T')[0]]
+  });
+
+  eventFormVisible = false;
+  eventForm: FormGroup = this.fb.group({
+    title: ['', Validators.required],
+    description: ['', Validators.required],
+    quota: ['', [Validators.required, Validators.minLength(1)]],
+    date: [new Date().toISOString().split('T')[0]],
+    price: ['' , Validators.required]
+  });
+
+  openEventModal(){
+    this.eventFormVisible = true;
+  }
+  closeEventModal(){
+    this.eventFormVisible = false;
+  }
+  createEvent(){
+
+  }
+  loadTrips() {
+
+  }
+
+  loadPosts() {
+      this.experiencesService.getPostsByUser().subscribe({
+        next: (posts) => {
+          this.posts = posts;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Error cargando posts:', err)
+      });
+  }
+  loadUser(){
+    const userId = this.authservice.getCurrentUserId()
+    this.userService.getUserById(userId).subscribe({
+      next:(data)=>{
+        this.user = data
+        this.cdr.detectChanges();
+        const birthDate = this.user?.profile?.date_of_birth
+        ? new Date(this.user.profile.date_of_birth)
+            .toISOString()
+            .split('T')[0]
+        : '';
+        this.profileForm.patchValue({
+          email: this.user?.email,
+          cellphone: this.user?.cellphone,
+          bio: this.user?.profile.bio,
+          date_of_birth: birthDate
+        });
+      },
+      error:(err)=>console.error('Error loading user', err)
+    })
+  }
+
+  loadEvents(){
+    
+  }
 
   closeTripModal() {
     this.tripFormVisible = false;
@@ -205,26 +170,55 @@ export class DashboardUser implements OnInit {
     this.selectedCategories = [];
     this.selectedlugares = [];
   }
+  openModalDeletePost(post:number){
+    this.selectedPostId = post;
+    this.confirmDeletePost = true;
+  }
+  openModalDeleteEventParticipation(event:number){
+    this.confirmDeleteEventParticipation = true;
+    this.selectedEventParticipationId = event;
+  }
+  openModalDeleteEvent(event:number){
+    this.confirmDeleteEvent = true;
+    this.selectedEventId = event;
+  }
 
-  updateTrip() {
-    if (this.tripForm.invalid || !this.selectedTripId) return;
-    
-    // Reconstruct description
-    const newDescription = `Categorías: ${this.selectedCategories.join(', ')}. Lugares: ${this.selectedlugares.join(', ')}`;
-    this.tripForm.patchValue({ description: newDescription });
+  closeModalDelete() {
+    this.confirmDeletePost = false;
+    this.selectedPostId = null;
+    this.confirmDeleteEventParticipation = false;
+    this.selectedEventParticipationId = null;
+    this.confirmDeleteEvent = false;
+    this.selectedEventId = null;
+  }
 
-    const updatedData = this.tripForm.value;
-    /* this.tripsService.updateTrip(this.selectedTripId, updatedData).subscribe({
-      next: (res) => {
-        console.log('Trip updated:', res);
-        this.loadTrips(); // Refresh list
-        this.closeTripModal();
-        this.successMessage = 'Viaje actualizado correctamente';
-        this.showSuccess = true;
-        setTimeout(() => this.showSuccess = false, 3000);
+  deletePost(postId:number){
+    this.experiencesService.deletePost(postId).subscribe({
+      next:()=>{
+        this.closeModalDelete();
+        this.cdr.detectChanges();
+        this.loadPosts();
+        this.showSuccessMessage('Se eliminó correctamente la publicación');
+      }, error: (err)=>{
+          console.error('Error al borrar el post: ', err);
+      }
+    })
+  }
+  deleteEvent(eventId: number) {
+    this.eventsService.deleteEvent(eventId).subscribe({
+      next: () => {
+        alert('Se eliminó correctamente la publicación');
+        this.closeModalDelete();
+        this.cdr.detectChanges();
+        this.eventsByUser();
       },
-      error: (err) => console.error('Error updating trip', err)
-    }); */
+      error: (err) => {
+        console.error('Error deleting event: ', err);
+      }
+    });
+  }
+  updateTrip() {
+
   }
 
   private passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
@@ -249,6 +243,7 @@ export class DashboardUser implements OnInit {
     this.previewUrlTemp = null;
     this.profile_picture = null;
   }
+  
   changePassword(){
     this.passwordError = '';
     if (this.passwordForm.invalid) {
@@ -256,15 +251,10 @@ export class DashboardUser implements OnInit {
       return;
     }
     const newPassword = this.passwordForm.get('newPassword')?.value;
-    const userId = this.user?.id;
-      if (!userId) {
-      return;
-    }
-    const formData = new FormData();
-    formData.append('password', (newPassword || '').trim());
-    this.accesoService.updateUser(userId, formData).subscribe({
+
+    const body = {password: (newPassword || '').trim()};
+    this.userService.patchUser(body).subscribe({
       next: (userActualizado) => {
-        localStorage.setItem('user', JSON.stringify(userActualizado));
         this.passwordForm.reset();
         this.formPasswordVisible = false;
         this.passwordError = '';
@@ -276,6 +266,7 @@ export class DashboardUser implements OnInit {
       }
     });
   }
+  
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     this.profile_picture = input.files && input.files[0] ? input.files[0] : null;
@@ -291,13 +282,12 @@ export class DashboardUser implements OnInit {
       return;
     }
 
-    const { email, cellphone, bio } = this.profileForm.value;
+    const { email, cellphone, bio, date_of_birth } = this.profileForm.value;
     const formData = new FormData();
-    formData.append('username', this.user.username || '');
-    formData.append('email', email || '');
-    formData.append('cellphone', cellphone || '');
+    formData.append('date_of_birth', date_of_birth || '');
     formData.append('bio', bio || '');
 
+    const body = {cellphone: cellphone, email:email };
     if (this.profile_picture) {
       formData.append('profile_picture', this.profile_picture);
     }
@@ -308,22 +298,17 @@ export class DashboardUser implements OnInit {
       return;
     }
 
-    this.accesoService.updateUser(userId, formData).subscribe({
-      next: (userActualizado) => {
-        this.user = userActualizado;
-        this.nombre = [userActualizado.first_name, userActualizado.last_name].filter(Boolean).join(' ').trim();
-        this.email = userActualizado.email;
-        this.cellphone = userActualizado.cellphone;
-        this.bio = userActualizado.bio || '';
-       // this.previewUrl = this.resolvePhoto(userActualizado.profile_picture) || this.previewUrl;
-        this.previewUrlTemp = null;
-        this.profile_picture = null;
-        this.profileForm.patchValue({
-          email: userActualizado.email,
-          cellphone: userActualizado.cellphone,
-          bio: userActualizado.bio || '',
-        });
-        localStorage.setItem('user', JSON.stringify(userActualizado));
+    this.userService.updateUserProfile(userId, formData).subscribe({
+      next: () => {
+        this.userService.patchUser(body).subscribe({
+          next:(data)=>{
+            this.loadUser();
+          },
+          error: (err) => {
+            console.error('Error al actualizar perfil:', err);
+          }
+        })
+        this.cdr.detectChanges()
         this.showSuccessMessage('Perfil actualizado correctamente');
         this.formVisible = false;
       },
@@ -333,16 +318,23 @@ export class DashboardUser implements OnInit {
     });
   }
 
-  getControlError(form: FormGroup, controlName: string): string {
-    const control = form.get(controlName);
-    if (!control || !control.touched || !control.errors) return '';
-    const errors = control.errors;
-    if (errors['required']) return 'Este campo es requerido';
-    if (errors['invalidEmail']) return 'Email inválido';
-    if (errors['invalidPhone']) return 'Teléfono inválido';
-    if (errors['minlength']) return `Mínimo ${errors['minlength'].requiredLength} caracteres`;
-    return 'Campo inválido';
+getControlError(form: FormGroup, controlName: string): string {
+  const control = form.get(controlName);
+
+  if (!control || !(control.dirty || control.touched) || !control.errors) {
+    return '';
   }
+
+  const errors = control.errors;
+
+  if (errors['required']) return 'Este campo es requerido';
+  if (errors['invalidEmail']) return 'Email inválido';
+  if (errors['invalidPhone']) return 'Teléfono inválido';
+  if (errors['invalidDate']) return 'Fecha inválida';
+  if (errors['minlength']) return `Mínimo ${errors['minlength'].requiredLength} caracteres`;
+
+  return 'Campo inválido';
+}
 
   passwordsMismatch(): boolean {
     return this.passwordForm.hasError('passwordsMismatch') && this.passwordForm.get('confirmNewPassword')?.touched === true;
@@ -355,16 +347,9 @@ export class DashboardUser implements OnInit {
     this.showSuccess = false;
   }
 
-  // Post Edit Logic
-  postFormVisible = false;
-  selectedPostId: number | null = null;
-  selectedPostFile: File | null = null;
-
   postForm: FormGroup = this.fb.group({
     title: ['', Validators.required],
-    description: ['', [Validators.required, Validators.minLength(20)]],
-    rating: [5, Validators.required],
-    location: [1, Validators.required]
+    description: ['', [Validators.required, Validators.minLength(20)]]
   });
 
   openPostModal(post: Post) {
@@ -373,6 +358,7 @@ export class DashboardUser implements OnInit {
       title: post.title,
       description: post.description
     });
+    this.postPreviewUrlTemp = post.imageUrl || null;
     this.postFormVisible = true;
   }
 
@@ -381,54 +367,75 @@ export class DashboardUser implements OnInit {
     this.selectedPostId = null;
     this.postForm.reset();
     this.selectedPostFile = null;
+    this.clearPostPreviewUrl();
   }
 
   onPostFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (file) {
       this.selectedPostFile = file;
+      this.clearPostPreviewUrl();
+      this.postPreviewUrlTemp = URL.createObjectURL(file);
     }
   }
 
-  updatePost() {
-    if (this.postForm.invalid || !this.selectedPostId) return;
+  eventParticipant(){
+    this.eventsService.getEventsByUserParticipant().subscribe({
+      next:(data) => {
+        this.eventsParticipant = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error getting event', err)
+    })
+  }
 
-    const updatedData = this.postForm.value;
-    this.experiencesService.updatePost(this.selectedPostId, updatedData).subscribe({
-      next: (post) => {
-        if (this.selectedPostFile && this.selectedPostId) {
-          this.experiencesService.uploadPostMedia(this.selectedPostId, this.selectedPostFile).subscribe({
-            next: () => {
-              this.showSuccessMessage('Artículo actualizado correctamente con imagen');
-              this.loadPosts();
-              this.closePostModal();
-            },
-            error: (err) => {
-              console.error('Error uploading image', err);
-              this.showSuccessMessage('Artículo actualizado, pero falló la subida de la imagen');
-              this.loadPosts();
-              this.closePostModal();
-            }
-          });
-        } else {
-          this.showSuccessMessage('Artículo actualizado correctamente');
-          this.loadPosts();
-          this.closePostModal();
-        }
+  leaveEvent(event:any){
+    this.eventsService.leaveEvent(event).subscribe({
+      next:()=>{
+        this.eventParticipant();
+        alert('Se borró su participación en el evento');
+        this.closeModalDelete();
+      },error:(err)=>console.error('Error deleting event', err)
+    })
+  }
+
+  eventsByUser(){
+    this.eventsService.getEventsByUser().subscribe({
+      next:(data)=>{
+        this.events = data;
+        this.cdr.detectChanges();
+      }, error:(err)=>console.error('Error getting event', err)
+    })
+  }
+
+  updatePost() {
+    if (this.postForm.invalid || !this.selectedPostId) {
+      this.postForm.markAllAsTouched();
+      return;
+    }
+
+    const formDataPost = new FormData()
+    const { title, description } = this.postForm.value;
+    formDataPost.append('title', title)
+    formDataPost.append('description', description)
+    if(this.selectedPostFile && this.selectedPostId){
+      formDataPost.append('image',this.selectedPostFile)
+    }
+
+    this.experiencesService.updatePost(this.selectedPostId, formDataPost).subscribe({
+      next: () => {
+        window.location.reload()
       },
       error: (err) => console.error('Error updating post', err)
     });
   }
 
-  // Review Logic
-  reviewFormVisible = false;
-  reviewForm: FormGroup = this.fb.group({
-    place: ['', Validators.required],
-    title: ['', Validators.required],
-    comment: ['', [Validators.required, Validators.minLength(10)]],
-    rating: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
-    visit_date: [new Date().toISOString().split('T')[0]]
-  });
+  private clearPostPreviewUrl() {
+    if (this.postPreviewUrlTemp?.startsWith('blob:')) {
+      URL.revokeObjectURL(this.postPreviewUrlTemp);
+    }
+    this.postPreviewUrlTemp = null;
+  }
 
   openReviewModal() {
     this.reviewFormVisible = true;
@@ -454,7 +461,7 @@ export class DashboardUser implements OnInit {
       reviewData.place = reviewData.place.id;
     }
 
-    this.locationsService.createReview(reviewData).subscribe({
+/*     this.locationsService.createReview(reviewData).subscribe({
       next: (res) => {
         this.showSuccessMessage('Reseña creada exitosamente');
         this.loadReviews();
@@ -469,14 +476,6 @@ export class DashboardUser implements OnInit {
            alert('Error al crear la reseña. Verifica que no hayas reseñado este lugar antes.');
         }
       }
-    });
-  }
-
-  private resolvePhoto(url?: string | null): string | null {
-    if (!url) return null;
-    if (/^https?:\/\//i.test(url)) return url;
-    const base = appsettings.apiUrl.replace(/\/api\/?$/,'');
-    const normalized = url.startsWith('/') ? url : `/${url}`;
-    return `${base}${normalized}`;
+    }); */
   }
 }

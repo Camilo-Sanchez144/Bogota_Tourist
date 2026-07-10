@@ -13,136 +13,146 @@
     <h1><b>Panel de Control de Usuario</b></h1>
     <p>Gestiona tus planes de viaje y perfil de usuario</p>
     <div class="perfil-container">
-  <div class="perfil-header">
-    <img [src]="previewUrl" alt="avatar" class="perfil-avatar">
-
-    <div class="perfil-info">
-      <h2>{{user.first_name}} {{user.last_name}}</h2>
-      <p class="email">{{user.email}}</p>
-      <p class="email">{{user.cellphone}}</p>
-      <p>{{user.bio}}</p>
-      <span class="miembro">Miembro desde Noviembre 2025</span>
-    </div>
-    <div class="d-flex-block">
-    <button class="btn-editar" (click)="openForm()">Editar Perfil</button>
-    <button class="btn-editar" (click)="openFormPassword()"> Cambiar contraseña</button>
-    </div>
-  </div>
-</div>
-
-<!-- <div class="stats-container">
-
-  <div class="stat-card pendiente">
-    <h3>{{ trips.length }}</h3>
-    <p>Viajes Totales</p>
-  </div>
-
-  <div class="stat-card curso">
-    <h3>{{ activeTripsCount }}</h3>
-    <p>Viajes en Curso</p>
-  </div>
-
-  <div class="stat-card completados">
-    <h3>{{ completedTripsCount }}</h3>
-    <p>Viajes Completados</p>
-  </div>
-</div>
-
-
- <div class="d-flex justify-content-between">
-  <h2 class="titulo-planes">Mis Planes de Viaje</h2>
-  <div>
-    <button class="btn btn-outline-secondary me-2" (click)="loadTrips()">↻ Recargar</button>
-    <button class="btn btn-crear mt-4" routerLink="/planear-viaje">+ Crear Nuevo Plan</button>
-  </div>
- </div>
-
-<div class="planes-section mb-4" *ngIf="trips.length === 0">
-  <p>Aún no tienes planes de viaje creados</p>
-  <button class="btn-primer-plan" routerLink="/planear-viaje">+ Crear tu Primer Plan</button>
-</div>
-
-<div class="row mb-4" *ngIf="activeTripsCount > 0">
-  <ng-container *ngFor="let trip of trips">
-    <div class="col-md-6 mb-3" *ngIf="trip.is_active">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title text-primary">{{ trip.title }}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">{{ trip.travel_date | date }}</h6>
-          <p class="card-text">
-            <strong>Plan:</strong> {{ trip.plan_name || 'Personalizado' }}<br>
-            <strong>Presupuesto:</strong> ${{ trip.daily_budget | number }} / día<br>
-            <strong>Personas:</strong> {{ trip.number_of_people }}
-          </p>
-          <p class="card-text small text-muted">{{ trip.description }}</p>
-          <div class="d-flex justify-content-between align-items-center mt-3">
-            <span class="badge bg-info text-dark">Activo</span>
-            <div>
-               <button class="btn btn-sm btn-outline-primary me-2" (click)="openTripModal(trip)">Editar</button>
-               <small class="text-muted">Creado el {{ trip.created_at | date }}</small>
-            </div>
-          </div>
+      <div class="perfil-header">
+        <img [src]="user?.profile?.profile_picture" alt="avatar"class="perfil-avatar"/>
+        <div class="perfil-info">
+          <h2>{{user?.first_name}} {{user?.last_name}}</h2>
+          <p class="email">{{user?.email}}</p>
+          <p class="phone">{{user?.cellphone}}</p>
+          <p>{{user?.profile?.bio}}</p>
+        </div>
+        <div class="d-flex-block">
+          <button class="btn-editar" (click)="openForm()">Editar Perfil</button>
+          <button class="btn-editar" (click)="openFormPassword()"> Cambiar contraseña</button>
         </div>
       </div>
     </div>
-  </ng-container>
-</div>
-
-<div *ngIf="completedTripsCount > 0">
-  <h3 class="text-muted mb-3">Viajes Completados</h3>
-  <div class="row mb-4">
-    <ng-container *ngFor="let trip of trips">
-      <div class="col-md-6 mb-3" *ngIf="!trip.is_active">
-        <div class="card h-100 shadow-sm bg-light border-0" style="opacity: 0.8;">
-          <div class="card-body">
-            <h5 class="card-title text-secondary">{{ trip.title }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{ trip.travel_date | date }}</h6>
-            <p class="card-text text-muted">
-              <strong>Plan:</strong> {{ trip.plan_name || 'Personalizado' }}<br>
-              <strong>Presupuesto:</strong> ${{ trip.daily_budget | number }} / día<br>
-              <strong>Personas:</strong> {{ trip.number_of_people }}
-            </p>
-            <p class="card-text small text-muted">{{ trip.description }}</p>
-            <div class="d-flex justify-content-between align-items-center mt-3">
-              <span class="badge bg-secondary">Completado</span>
-              <div>
-                 <small class="text-muted">Creado el {{ trip.created_at | date }}</small>
+  <h3>Mis Artículos Publicados</h3>
+  
+  @if(posts.length === 0){
+    <div class="planes-section mb-4">
+      <p class="text-info">Aún no has publicado ningún articulo (╥﹏╥)</p>
+      <p>Aquí puedes subir tus experiencias sobre los lugares que visitas. Cada artículo que publiques ayudará a otros viajeros a conocer sitios nuevos y vivir mejores momentos.</p>
+      <button class="btn-primer-plan" routerLink="/blog-bogota">+ Anímate a crear tu primer Articulo</button>
+    </div>
+  }
+  @if(posts.length > 0){
+    <div class="row mb-4">
+      @for(post of posts; track post.id){
+        <div class="col-md-6 mb-3" >
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <img [src]="post.imageUrl" alt="">
+              <h5 class="card-title text-primary">{{ post.title }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{ post.created_at | date }}</h6>
+              <p class="card-text">{{ post.description }}</p>
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                  <button class="btn btn-sm btn-outline-primary me-2" (click)="openPostModal(post)">Editar</button>
+                  <small class="text-muted">{{ post.likes_count }} Likes</small>
+                </div>
+                <button class="btn btn-sm btn-outline-danger" (click)="openModalDeletePost(post.id)">Eliminar Post</button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </ng-container>
-  </div>
-</div> -->
-  <h3>Mis Artículos Publicados</h3>
-  
-  <div class="planes-section mb-4" *ngIf="posts.length === 0">
-    <p class="text-info">Aún no has publicado ningún articulo (╥﹏╥)</p>
-    <p>Aquí puedes subir tus experiencias sobre los lugares que visitas. Cada artículo que publiques ayudará a otros viajeros a conocer sitios nuevos y vivir mejores momentos.</p>
-    <button class="btn-primer-plan" routerLink="/blog-bogota">+ Anímate a crear tu primer Articulo</button>
+      }
+    </div>
+  }
+
+  <div class="d-flex justify-content-between mt-5">
+    <h3>Eventos en los que participas</h3>
+    <button class="btn btn-crear" onclick="window.location.href='planearViaje'">Conocer más eventos</button>
   </div>
 
-  <div class="row mb-4" *ngIf="posts.length > 0">
-    <div class="col-md-6 mb-3" *ngFor="let post of posts">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title text-primary">{{ post.title }}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">{{ post.created_at | date }}</h6>
-          <p class="card-text">{{ post.description }}</p>
-          <div class="d-flex justify-content-between align-items-center mt-3">
+  @if(eventsParticipant.length == 0){
+    <div class="planes-section mb-4">
+      <p class="text-info">Aún no participas en ningún evento</p>
+      <p>Inscríbete a un evento para poder conocer mas de Bogotá</p>
+    </div>
+  }
 
-            <div>
-               <button class="btn btn-sm btn-outline-primary me-2" (click)="openPostModal(post)">Editar</button>
-               <small class="text-muted">{{ post.likes_count }} Likes</small>
+  @for(event of eventsParticipant; track event.id){
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title text-primary">{{ event.title }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ event.location }} - {{ event.date }}</h6>
+            <p class="card-text">{{ event.description }}</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <span class="badge bg-success">★ creado por: {{ event.user.first_name }} {{ event.user.last_name }}</span>
+              <button class="btn btn-danger" (click)="openModalDeleteEventParticipation(event.id)">Dejar evento</button>
             </div>
           </div>
         </div>
       </div>
     </div>
+  }
+  <div class="modal" [class.active]="confirmDeleteEventParticipation" #modal>
+    <div class="modal-content">
+
+      <div class="text-center py-3">
+        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2.5rem;"></i>
+        <p class="mt-3 mb-1 fw-semibold">¿Estás seguro de que deseas eliminar este post?</p>
+        <p class="text-muted small">Esta acción no se puede deshacer.</p>
+      </div>
+
+      <div class="d-flex gap-2 mt-2">
+        <button class="btn btn-outline-secondary w-50" (click)="closeModalDelete()">Cancelar</button>
+        <button class="btn btn-danger w-50" (click)="leaveEvent(selectedEventParticipationId!)" [disabled]="!selectedEventParticipationId">Sí, eliminar</button>
+      </div>
+    </div>
   </div>
 
-  <!-- Mis Reseñas Section -->
+  <div class="d-flex justify-content-between mt-5">
+    <h3>Tus Eventos</h3>
+    <button class="btn btn-crear" (click)="openEventModal()">+ Crea un evento</button>
+  </div>
+
+  @if(events.length === 0){
+    <div class="planes-section mb-4">
+      <p class="text-info">Aún no creas ningún evento</p>
+      <p>Crea un evento para concer personas en Bogotá</p>
+    </div>
+  }
+  @for(event of events; track event.id){
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title text-primary">{{ event.title }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ event.description }} - {{ event.date | date }}</h6>
+            <p class="card-text">{{ event.location }}</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+            <p>personas inscritas: {{event.current_people}}</p>
+            <p>{{event.location}}</p>
+            <p>{{event.price}}</p>
+            </div>
+            <button class="btn btn-primary"> Editar Evento </button>
+            <button class="btn btn-danger" (click)="openModalDeleteEvent(event.id)"> Eliminar Evento </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+  
+  <div class="modal" [class.active]="confirmDeleteEvent" #modal>
+    <div class="modal-content">
+
+      <div class="text-center py-3">
+        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2.5rem;"></i>
+        <p class="mt-3 mb-1 fw-semibold">¿Estás seguro de que deseas eliminar este post?</p>
+        <p class="text-muted small">Esta acción no se puede deshacer.</p>
+      </div>
+
+      <div class="d-flex gap-2 mt-2">
+        <button class="btn btn-outline-secondary w-50" (click)="closeModalDelete()">Cancelar</button>
+        <button class="btn btn-danger w-50" (click)="deleteEvent(selectedEventId!)" [disabled]="!selectedEventId">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+
   <div class="d-flex justify-content-between mt-5">
     <h3>Mis Reseñas</h3>
     <button class="btn btn-crear" (click)="openReviewModal()">+ Crear Reseña</button>
@@ -167,51 +177,74 @@
       </div>
     </div>
   </div>
-
 </div>
 
+<div class="modal" [class.active]="confirmDeletePost" #modal>
+  <div class="modal-content">
+
+    <div class="text-center py-3">
+      <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2.5rem;"></i>
+      <p class="mt-3 mb-1 fw-semibold">¿Estás seguro de que deseas eliminar este post?</p>
+      <p class="text-muted small">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <div class="d-flex gap-2 mt-2">
+      <button class="btn btn-outline-secondary w-50" (click)="closeModalDelete()">Cancelar</button>
+      <button class="btn btn-danger w-50" (click)="deletePost(selectedPostId!)" [disabled]="!selectedPostId">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal" [class.active]="formVisible" #modal>
   <div class="modal-content">
     <div class="d-flex justify-content-between">
-    <h2>Modificar Perfil<hr></h2>
-    <button class="close-btn" (click)="closeForm()">Cerrar</button>
+      <h2>Modificar Perfil<hr></h2>
+      <button class="close-btn" (click)="closeForm()">Cerrar</button>
     </div>
     <form class="mb-3" [formGroup]="profileForm" (ngSubmit)="onSubmitProfile()">
       <label>Actualiza tu foto de perfil</label>
       <input type="file" accept="image/*" (change)="onFileSelected($event)">
       @if (previewUrlTemp) {
         <img [src]="previewUrlTemp" alt="preview" style="max-width: 200px; margin-top: 10px;">
-      }>
+      }
 
       <label>Nombre</label>
-      <input type="text" placeholder="Nombre" [value]="nombre" disabled />
+      <input type="text" placeholder="Nombre" [value]="(user?.first_name || '') + ' ' + (user?.last_name || '')" disabled />
 
       <label>Email</label>
-      <input type="email" placeholder="TuEmail@gmail.com" formControlName="email" />
+      <input type="email" placeholder="email@gmail.com" formControlName="email" [value]="user?.email"/>
       @if (getControlError(profileForm, 'email')) {
         <p class="text-danger">{{ getControlError(profileForm, 'email') }}</p>
       }
 
       <label>Celular</label>
-      <input type="number" placeholder="Ej: 300 123 4567 " formControlName="cellphone" />
+      <input type="number" placeholder="Ej: 300 123 4567 " formControlName="cellphone" [value]="user?.cellphone" />
       @if (getControlError(profileForm, 'cellphone')) {
         <p class="text-danger">{{ getControlError(profileForm, 'cellphone') }}</p>
       }
+      <label>Fecha de Nacimiento</label>
+      <input type="Date"  formControlName="date_of_birth" [value]="user?.profile?.date_of_birth | date:'yyyy-MM-dd'"/>
+      @if (getControlError(profileForm, 'date_of_birth')) {
+        <p class="text-danger">{{ getControlError(profileForm, 'date_of_birth') }}</p>
+      }
 
       <label>Biografía</label>
-      <textarea placeholder="Añade una Breve Descripción de ti" formControlName="bio"></textarea>
+      <textarea placeholder="Añade una breve descripción de ti" formControlName="bio" [value]="user?.profile?.bio"></textarea>
+      @if (getControlError(profileForm, 'bio')) {
+        <p class="text-danger">{{ getControlError(profileForm, 'bio') }}</p>
+      }
 
 
       <button type="submit" class="btn btn-success w-100 mt-3">Enviar</button>
     </form>
   </div>
 </div>
+
 <div class="modal" [class.active]="formPasswordVisible" #modal>
   <div class="modal-content">
     <div class="d-flex justify-content-between">
-    <h2>Actualizar contraseña<hr></h2>
-    <button class="close-btn" (click)="closeForm()">Cerrar</button>
+      <h2>Actualizar contraseña<hr></h2>
+      <button class="close-btn" (click)="closeForm()">Cerrar</button>
     </div>
     <form class="mb-3" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
 
@@ -238,7 +271,6 @@
   </div>
 </div>
 
-<!-- TRIP EDIT MODAL -->
 <div class="modal" [class.active]="tripFormVisible">
   <div class="modal-content">
     <div class="d-flex justify-content-between">
@@ -260,7 +292,7 @@
       <input type="number" formControlName="daily_budget" class="form-control mb-2">
 
       <label>¿Qué te interesa?</label>
-      <div class="categories-container mb-3">
+      <!--<div class="categories-container mb-3">
         @for (c of categories; track c) {
           <button
             type="button"
@@ -271,7 +303,7 @@
             {{ c }}
           </button>
         }
-      </div>
+      </div>-->
       
       <label>Lugares para visitar</label>
       <div class="selected-list mb-3">
@@ -285,7 +317,7 @@
 
       <label>Añadir lugares para visitar</label>
       <div class="mb-3">
-        @for (l of lugares; track l) {
+        <!--@for (l of lugares; track l) {
           <button
             type="button"
             (click)="togglelugares(l)"
@@ -294,7 +326,7 @@
           >
             {{ l }}
           </button>
-        }
+        }-->
       </div>
 
       <label>Plan seleccionado</label>
@@ -315,7 +347,6 @@
   </div>
 </div>
 
-<!-- POST EDIT MODAL -->
 <div class="modal" [class.active]="postFormVisible">
   <div class="modal-content">
     <div class="d-flex justify-content-between">
@@ -329,52 +360,46 @@
       <label>Descripción</label>
       <textarea class="form-control mb-2" formControlName="description" placeholder="Cuenta tu experiencia..." rows="4"></textarea>
 
-      <label>Calificación (1-5)</label>
-      <input type="number" formControlName="rating" min="1" max="5" class="form-control mb-2">
-
       <label>Imagen de Portada (Opcional)</label>
-      <input type="file" (change)="onPostFileSelected($event)" accept="image/*" class="form-control mb-2">
+      <input type="file" (change)="onPostFileSelected($event)" accept="image/*" class=" mb-5">
+
+      @if (postPreviewUrlTemp) {
+        <img [src]="postPreviewUrlTemp" alt="Vista previa del post" class="img-fluid rounded mb-3" style="max-height: 240px; object-fit: cover;">
+      }
 
       <button type="submit" class="btn btn-primary w-100" [disabled]="postForm.invalid">Guardar Cambios</button>
     </form>
   </div>
 </div>
 
-<!-- REVIEW CREATION MODAL -->
-<div class="modal" [class.active]="reviewFormVisible">
+<div class="modal" [class.active]="eventFormVisible">
   <div class="modal-content">
     <div class="d-flex justify-content-between">
-      <h2>Crear Reseña<hr></h2>
-      <button class="close-btn" (click)="closeReviewModal()">Cerrar</button>
+      <h2>Crear Evento<hr></h2>
+      <button class="close-btn" (click)="closeEventModal()">Cerrar</button>
     </div>
-    <form [formGroup]="reviewForm" (ngSubmit)="createReview()">
+    <form [formGroup]="eventForm" (ngSubmit)="createReview()">
       
-      <label>Lugar</label>
-      <select formControlName="place" class="form-control mb-2">
-        <option value="" disabled selected>Selecciona un lugar</option>
-        @for (place of placesList; track place.id) {
-          <option [ngValue]="place.id">{{ place.name }}</option>
-        }
-      </select>
+      <label>Titulo</label>
+      <input type="text" formControlName="title" class="form-control mb-2">
 
-      <label>Título</label>
-      <input type="text" formControlName="title" placeholder="Resumen de tu experiencia" class="form-control mb-2"/>
+      <label>Descripción</label>
+      <input type="text" formControlName="description" placeholder="Acerca de qué será la actividad" class="form-control mb-2"/>
 
-      <label>Comentario</label>
-      <textarea class="form-control mb-2" formControlName="comment" placeholder="Cuéntanos más detalles..." rows="4"></textarea>
-      @if (reviewForm.get('comment')?.hasError('minlength')) {
-        <small class="text-danger">El comentario debe tener al menos 10 caracteres.</small>
-      }
+      <label>Ubicación</label>
+      <input class="form-control mb-2" formControlName="location" placeholder="Donde ocurrirá el evento" rows="4">
 
-      <label>Calificación</label>
+      <label>Cupo</label>
       <div class="rating-input mb-2">
-        <input type="number" formControlName="rating" min="1" max="5" class="form-control">
+        <input type="number" formControlName="quota" min="1" class="form-control">
       </div>
 
-      <label>Fecha de Visita</label>
-      <input type="date" formControlName="visit_date" class="form-control mb-2">
+      <label>Fecha del Evento</label>
+      <input type="date" formControlName="date" class="form-control mb-2">
 
-      <button type="submit" class="btn btn-success w-100 mt-3" [disabled]="reviewForm.invalid">Publicar Reseña</button>
+      <label>Costo del evento</label>
+      <input type="number" formControlName="price" class="form-control mb-2" placeholder="$" min="1">
+      <button type="submit" class="btn btn-success w-100 mt-3" [disabled]="eventForm.invalid">Publicar Evento</button>
     </form>
   </div>
 </div>

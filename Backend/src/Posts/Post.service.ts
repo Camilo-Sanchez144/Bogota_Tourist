@@ -80,11 +80,11 @@ export class PostService{
         return await Posts.findOne({ where: { id: postId } });
     }
     async deletePost(postId:number, userId:number){
-        const postDelete = await Posts.findOneBy({ id:postId, is_active:true  })
+        const postDelete = await Posts.findOne({ where:{id:postId, is_active:true  }, relations: ['user']})
         if(!postDelete){
             throw new Error("Post no encontrado");
         }
-        if (postDelete.user?.id !== userId) {
+        if (postDelete.user?.id != userId) {
             throw new Error('No autorizado')
         }
         postDelete.is_active = false
