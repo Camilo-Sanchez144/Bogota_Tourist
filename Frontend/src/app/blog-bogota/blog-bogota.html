@@ -15,7 +15,6 @@
   <div class="modal-contentPost" (click)="$event.stopPropagation()">
     @if(postVisible && selectedPost){
 
-      <!-- Panel izquierdo: imagen -->
       <div class="modal-image-panel">
         <img
           class="modal-main-image"
@@ -23,11 +22,8 @@
           [alt]="selectedPost.title"
         />
       </div>
-
-      <!-- Panel derecho: contenido -->
       <div class="modal-body-panel">
 
-        <!-- Header autor -->
         <div class="modal-author-header">
           <div class="author-info">
             @if(selectedPost.user.profile.profile_picture){

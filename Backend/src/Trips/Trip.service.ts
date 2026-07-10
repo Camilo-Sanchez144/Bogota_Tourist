@@ -47,8 +47,8 @@ export class TripService {
 
                 for (const placeData of dayData.places) {
 
-                    const place = await  queryRunner.manager.findOne(Place,{
-                        where: { id: placeData.place_id }
+                    const place = await queryRunner.manager.findOne(Place,{
+                        where: { id: placeData.place_id, owner: { id: userId } }
                     })
 
                     if (!place) throw new Error('Place no existe')
@@ -123,7 +123,7 @@ export class TripService {
                         for (const placeData of dayData.places) {
 
                             const place = await queryRunner.manager.findOne(Place,{
-                                where: { id: placeData.place_id }
+                                where: { id: placeData.place_id, owner: { id: userId } }
                             })
 
                             if (!place) throw new Error('Place no existe')

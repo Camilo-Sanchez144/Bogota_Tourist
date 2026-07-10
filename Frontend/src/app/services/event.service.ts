@@ -36,7 +36,7 @@ export class EventService {
     return this.http.put<IEvent>(`${this.eventsUrl}/event/${id}/`, event, { headers: this.authHeaders() });
   }
   deleteEvent(eventId:number): Observable<IEvent> {
-    return this.http.delete<IEvent>(`${this.eventsUrl}/event/${eventId}`, { headers: this.authHeaders() });
+    return this.http.delete<IEvent>(`${this.eventsUrl}/delete/${eventId}`, { headers: this.authHeaders() });
   }
   joinEvent(eventId:number):Observable<IEventParticipant>{
     return this.http.post<IEventParticipant>(`${this.eventsParcicipantUrl}event/${eventId}`,{}, { headers: this.authHeaders() })
@@ -49,5 +49,8 @@ export class EventService {
   }
   getEventsByUser():Observable<IEvent[]>{
     return this.http.get<IEvent[]>(`${this.eventsUrl}/user`, { headers: this.authHeaders() })
+  }
+  editEvent(eventId:number, event: IEvent):Observable<IEvent>{
+    return this.http.patch<IEvent>(`${this.eventsUrl}/edit/${eventId}`, event, { headers: this.authHeaders() })
   }
 }

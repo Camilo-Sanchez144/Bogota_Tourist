@@ -32,7 +32,7 @@ export class TripPlace extends BaseEntity{
     @Column({default: false})
     is_visited!:boolean
 
-    @ManyToOne(() => Place, { eager: true })
+    @ManyToOne(() => Place, { eager: true, onDelete: 'RESTRICT' })
     @JoinColumn({ name: 'place_id' })
     place!: Place
 }

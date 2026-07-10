@@ -3,10 +3,8 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, 
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../services/user.service';
-//import { TripsService } from '../services/event.service';
 import { ExperiencesService } from '../services/experiences.service';
 import { LocationsService } from '../services/locations.service';
-//import { Trip } from '../interfaces/Trip';
 import { EventService } from '../services/event.service';
 import { Post } from '../interfaces/Post';
 import { Place } from '../interfaces/Place';
@@ -42,6 +40,7 @@ export class DashboardUser implements OnInit {
     this.loadUser();
     this.eventParticipant();
     this.eventsByUser();
+    this.loadEvents();
   }
   passwordError = ''
   formPasswordVisible = false;
@@ -50,6 +49,7 @@ export class DashboardUser implements OnInit {
   confirmDeletePost = false;
   confirmDeleteEventParticipation = false;
   confirmDeleteEvent = false;
+  editEventFormVisible = false;
   tripFormVisible = false;
   selectedTripId: number | null = null;
 
@@ -111,6 +111,7 @@ export class DashboardUser implements OnInit {
     title: ['', Validators.required],
     description: ['', Validators.required],
     quota: ['', [Validators.required, Validators.minLength(1)]],
+    location: ['', Validators.required],
     date: [new Date().toISOString().split('T')[0]],
     price: ['' , Validators.required]
   });
@@ -122,12 +123,33 @@ export class DashboardUser implements OnInit {
     this.eventFormVisible = false;
   }
   createEvent(){
-
+    if(this.eventForm.invalid){
+      this.eventForm.markAllAsTouched();
+      return;
+    }
+    const { title, description, quota, date, price,location } = this.eventForm.value;
+    const newEvent = {
+      title: title || '',
+      description: description || '',
+      max_people: quota ? Number(quota) : 0,
+      location: String(location) || '',
+      date: date || new Date().toISOString().split('T')[0],
+      price: price ? Number(price) : 0
+    } as any; 
+    
+    this.eventsService.createevent(newEvent).subscribe({
+      next: () => {
+        this.loadEvents();
+        this.closeEventModal();
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error(err)
+      
+    })
   }
   loadTrips() {
 
   }
-
   loadPosts() {
       this.experiencesService.getPostsByUser().subscribe({
         next: (posts) => {
@@ -160,9 +182,62 @@ export class DashboardUser implements OnInit {
   }
 
   loadEvents(){
+    this.eventsService.getEvent().subscribe({
+      next:(data)=>{
+        this.events = data;
+        this.cdr.detectChanges();
+      },
+      error:(err)=>console.error('Error loading user', err)
+  });
+  }
+  openEditEventModal(eventId:any){
+    this.editEventFormVisible = true;
+    this.selectedEventId = eventId;
+    this.eventsService.getEventById(eventId).subscribe({
+      
+      next:(data)=>{
+        const formattedDate = new Date(data.date)
+        .toISOString()
+        .split('T')[0];
+        this.eventForm.patchValue({
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        max_people: data.max_people,
+        location: data.location,
+        date: formattedDate,
+        quota: data.max_people
+      });
+
+    },error: (err) => console.error(err)
+  })
     
   }
-
+  closeEditEventModal(){
+    this.editEventFormVisible = false;
+    this.selectedEventId = null;
+  }
+  editEvent(eventId:number){
+    const { title, description, quota, date, price,location } = this.eventForm.value;
+    const newEvent = {
+      title: title || '',
+      description: description || '',
+      max_people: quota ? Number(quota) : 0,
+      location: String(location) || '',
+      date: date || new Date().toISOString().split('T')[0],
+      price: price ? Number(price) : 0
+    } as any; 
+    
+    this.eventsService.editEvent(eventId,newEvent).subscribe({
+      next: () => {
+        this.loadEvents();
+        this.closeEditEventModal();
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error(err)
+      
+    }) 
+  }
   closeTripModal() {
     this.tripFormVisible = false;
     this.selectedTripId = null;
